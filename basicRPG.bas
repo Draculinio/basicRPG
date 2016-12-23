@@ -1,7 +1,15 @@
 DIM SHARED escenario$(1 TO 80, 1 TO 20)
 
+REM Variables del jugador
+DIM SHARED playerx
+DIM SHARED playery
+DIM SHARED nombre$
+
 playerx = 1
 playery = 1
+
+REM Nombrando al jugador
+INPUT "Ingrese el nombre del jugador: ", nombre$
 
 FOR x = 1 TO 80
     FOR y = 1 TO 20
@@ -10,10 +18,11 @@ FOR x = 1 TO 80
 NEXT
 escenario$(playerx, playery) = "X"
 PRINT dibujarEscenario
+flagSalida = 0
 DO
     k$ = INKEY$
-
-LOOP UNTIL k$ = CHR$(27)
+    flagSalida = recibirTecla(k$)
+LOOP UNTIL flagSalida = 1
 
 
 FUNCTION dibujarEscenario ()
@@ -26,10 +35,11 @@ FOR y = 1 TO 20
     PRINT linea$
     linea$ = ""
 NEXT
+PRINT nombre$ + "(" + STR$(playerx) + "," + STR$(playery) + ")"
 END FUNCTION
 
 FUNCTION recibirTecla (tecla$)
-
+retorno = 0
 REM up
 IF tecla$ = CHR$(0) + CHR$(72) THEN
     IF playery > 1 THEN
@@ -41,7 +51,7 @@ IF tecla$ = CHR$(0) + CHR$(72) THEN
 END IF
 
 REM down
-IF k$ = CHR$(0) + CHR$(80) THEN
+IF tecla$ = CHR$(0) + CHR$(80) THEN
     IF playery < 20 THEN
         escenario$(playerx, playery) = "0"
         playery = playery + 1
@@ -51,7 +61,7 @@ IF k$ = CHR$(0) + CHR$(80) THEN
 END IF
 
 REM left
-IF k$ = CHR$(0) + CHR$(75) THEN
+IF tecla$ = CHR$(0) + CHR$(75) THEN
     IF playerx > 1 THEN
         escenario$(playerx, playery) = "0"
         playerx = playerx - 1
@@ -61,7 +71,7 @@ IF k$ = CHR$(0) + CHR$(75) THEN
 END IF
 
 REM right
-IF k$ = CHR$(0) + CHR$(77) THEN
+IF tecla$ = CHR$(0) + CHR$(77) THEN
     IF playery < 80 THEN
         escenario$(playerx, playery) = "0"
         playerx = playerx + 1
@@ -70,4 +80,8 @@ IF k$ = CHR$(0) + CHR$(77) THEN
     END IF
 END IF
 
-END SUB
+IF tecla$ = CHR$(27) THEN
+    retorno = 1
+END IF
+recibirTecla = retorno
+END FUNCTION
