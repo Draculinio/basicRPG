@@ -4,13 +4,14 @@ REM Variables del jugador
 DIM SHARED playerx
 DIM SHARED playery
 DIM SHARED nombre$
+DIM SHARED clase$
+DIM SHARED raza$
 
 playerx = 1
 playery = 1
 
-REM Nombrando al jugador
-INPUT "Ingrese el nombre del jugador: ", nombre$
-
+PRINT seleccionarPantalla
+PRINT crearPersonaje
 FOR x = 1 TO 80
     FOR y = 1 TO 20
         escenario$(x, y) = "0"
@@ -18,12 +19,27 @@ FOR x = 1 TO 80
 NEXT
 escenario$(playerx, playery) = "X"
 PRINT dibujarEscenario
+
 flagSalida = 0
 DO
     k$ = INKEY$
     flagSalida = recibirTecla(k$)
 LOOP UNTIL flagSalida = 1
 
+FUNCTION crearPersonaje ()
+INPUT "Ingrese el nombre del jugador: ", nombre$
+seleccionarRaza
+seleccionarClase
+END FUNCTION
+
+FUNCTION seleccionarPantalla ()
+INPUT "Seleccione modo de juego pantalla (1-640x480, 16 colores / 2-320x200 256 colores): ", modo
+IF modo = 1 THEN
+    SCREEN 12
+ELSE
+    SCREEN 13
+END IF
+END FUNCTION
 
 FUNCTION dibujarEscenario ()
 CLS
@@ -36,6 +52,7 @@ FOR y = 1 TO 20
     linea$ = ""
 NEXT
 PRINT nombre$ + "(" + STR$(playerx) + "," + STR$(playery) + ")"
+PRINT clase$ + " " + raza$
 END FUNCTION
 
 FUNCTION recibirTecla (tecla$)
@@ -85,3 +102,32 @@ IF tecla$ = CHR$(27) THEN
 END IF
 recibirTecla = retorno
 END FUNCTION
+
+SUB seleccionarRaza ()
+PRINT "Seleccione raza (h-Humano/e-Elfo): "
+SLEEP
+k$ = UCASE$(INKEY$)
+SELECT CASE k$
+    CASE "H"
+        raza$ = "Humano"
+    CASE "E"
+        raza$ = "Elfo"
+    CASE ELSE
+        raza$ = "Humano"
+END SELECT
+END SUB
+
+SUB seleccionarClase ()
+k$ = ""
+PRINT "Seleccione clase (g-Guerrero/m-Mago): "
+SLEEP
+k$ = UCASE$(INKEY$)
+SELECT CASE k$
+    CASE "G"
+        clase$ = "Guerrero"
+    CASE "M"
+        clase$ = "Mago"
+    CASE ELSE
+        clase$ = "Guerrero"
+END SELECT
+END SUB
