@@ -1,5 +1,4 @@
-DIM SHARED escenario$(1 TO 80, 1 TO 20)
-
+DIM SHARED escenario$(1 TO 31, 1 TO 23)
 REM Variables del jugador
 DIM SHARED playerx
 DIM SHARED playery
@@ -10,15 +9,15 @@ DIM SHARED raza$
 playerx = 1
 playery = 1
 
-PRINT seleccionarPantalla
-PRINT crearPersonaje
-FOR x = 1 TO 80
-    FOR y = 1 TO 20
+seleccionarPantalla
+crearPersonaje
+FOR x = 1 TO 31
+    FOR y = 1 TO 23
         escenario$(x, y) = "0"
     NEXT
 NEXT
 escenario$(playerx, playery) = "X"
-PRINT dibujarEscenario
+dibujarEscenarioGrafico
 
 flagSalida = 0
 DO
@@ -26,20 +25,38 @@ DO
     flagSalida = recibirTecla(k$)
 LOOP UNTIL flagSalida = 1
 
-FUNCTION crearPersonaje ()
+SUB crearPersonaje ()
 INPUT "Ingrese el nombre del jugador: ", nombre$
 seleccionarRaza
 seleccionarClase
-END FUNCTION
+END SUB
 
-FUNCTION seleccionarPantalla ()
+SUB seleccionarPantalla ()
 INPUT "Seleccione modo de juego pantalla (1-640x480, 16 colores / 2-320x200 256 colores): ", modo
 IF modo = 1 THEN
     SCREEN 12
 ELSE
     SCREEN 13
 END IF
-END FUNCTION
+END SUB
+
+SUB dibujarEscenarioGrafico ()
+CLS
+px = 0
+py = 0
+FOR y = 1 TO 23
+    FOR x = 1 TO 31
+        IF escenario$(x, y) = "X" THEN
+            LINE (x * 20, y * 20)-(x * 20 + 20, y * 20 + 20), 5, BF
+        END IF
+    NEXT
+NEXT
+LOCATE 23, 1
+PRINT nombre$ + "(" + STR$(playerx) + "," + STR$(playery) + ")"
+LOCATE 24, 1
+PRINT clase$ + " " + raza$
+
+END SUB
 
 FUNCTION dibujarEscenario ()
 CLS
@@ -53,7 +70,7 @@ FOR y = 1 TO 20
 NEXT
 PRINT nombre$ + "(" + STR$(playerx) + "," + STR$(playery) + ")"
 PRINT clase$ + " " + raza$
-END FUNCTION
+END SUB
 
 FUNCTION recibirTecla (tecla$)
 retorno = 0
@@ -63,17 +80,17 @@ IF tecla$ = CHR$(0) + CHR$(72) THEN
         escenario$(playerx, playery) = "0"
         playery = playery - 1
         escenario$(playerx, playery) = "X"
-        PRINT dibujarEscenario
+        dibujarEscenarioGrafico
     END IF
 END IF
 
 REM down
 IF tecla$ = CHR$(0) + CHR$(80) THEN
-    IF playery < 20 THEN
+    IF playery < 23 THEN
         escenario$(playerx, playery) = "0"
         playery = playery + 1
         escenario$(playerx, playery) = "X"
-        PRINT dibujarEscenario
+        dibujarEscenarioGrafico
     END IF
 END IF
 
@@ -83,17 +100,17 @@ IF tecla$ = CHR$(0) + CHR$(75) THEN
         escenario$(playerx, playery) = "0"
         playerx = playerx - 1
         escenario$(playerx, playery) = "X"
-        PRINT dibujarEscenario
+        dibujarEscenarioGrafico
     END IF
 END IF
 
 REM right
 IF tecla$ = CHR$(0) + CHR$(77) THEN
-    IF playery < 80 THEN
+    IF playerx < 31 THEN
         escenario$(playerx, playery) = "0"
         playerx = playerx + 1
         escenario$(playerx, playery) = "X"
-        PRINT dibujarEscenario
+        dibujarEscenarioGrafico
     END IF
 END IF
 
