@@ -51,10 +51,11 @@ FOR y = 1 TO 23
         END IF
     NEXT
 NEXT
-LOCATE 23, 1
+LOCATE 1, 1
 PRINT nombre$ + "(" + STR$(playerx) + "," + STR$(playery) + ")"
-LOCATE 24, 1
+LOCATE 1, 40
 PRINT clase$ + " " + raza$
+LINE (0, 15)-(640, 15)
 
 END SUB
 
