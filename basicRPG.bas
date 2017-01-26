@@ -1,3 +1,4 @@
+
 REM ------------------------------BASIC RPG--------------------------
 
 REM ----ENTORNO----
@@ -11,7 +12,6 @@ DIM SHARED elementoBase AS elemento
 elementoBase.nombre = "Vacio"
 elementoBase.bloqueante = "N"
 
-DIM SHARED mapa(1 TO 31, 1 TO 23) AS STRING
 DIM SHARED escenario(1 TO 31, 1 TO 23) AS elemento
 REM Variables del jugador
 DIM SHARED playerx
@@ -22,10 +22,10 @@ DIM SHARED raza$
 playerx = 1
 playery = 1
 REM ----FIN DEL ENTORNO----
-
-seleccionarPantalla
+SCREEN 12
+'seleccionarPantalla
 crearPersonaje
-
+presentacion
 REM ----CREACION DEL ESCENARIO----
 FOR x = 1 TO 31
     FOR y = 1 TO 23
@@ -37,7 +37,6 @@ popular "X"
 escenario(playerx, playery) = elementoBase
 popular "M"
 escenario(10, 10) = elementoBase
-PRINT escenario(1, 1).nombre
 REM ----FIN DE CREACION DE ESCENARIO----
 
 dibujarEscenarioGrafico
@@ -67,8 +66,6 @@ SUB dibujarEscenarioGrafico ()
 CLS
 px = 0
 py = 0
-LOCATE 5, 5
-PRINT escenario(1, 1).nombre
 FOR y = 1 TO 23
     FOR x = 1 TO 31
         SELECT CASE RTRIM$(escenario(x, y).nombre)
@@ -83,6 +80,7 @@ LOCATE 1, 1
 PRINT nombre$ + "(" + STR$(playerx) + "," + STR$(playery) + ")"
 LOCATE 1, 40
 PRINT clase$ + " " + raza$
+LOCATE 1, 60
 LINE (0, 15)-(640, 15)
 
 END SUB
@@ -92,48 +90,56 @@ retorno = 0
 REM up
 IF tecla$ = CHR$(0) + CHR$(72) THEN
     IF playery > 1 THEN
-        popular "0"
-        escenario(playerx, playery) = elementoBase
-        playery = playery - 1
-        popular "X"
-        escenario(playerx, playery) = elementoBase
-        dibujarEscenarioGrafico
+        IF escenario(playerx, playery - 1).bloqueante = "N" THEN
+            popular "0"
+            escenario(playerx, playery) = elementoBase
+            playery = playery - 1
+            popular "X"
+            escenario(playerx, playery) = elementoBase
+            dibujarEscenarioGrafico
+        END IF
     END IF
 END IF
 
 REM down
 IF tecla$ = CHR$(0) + CHR$(80) THEN
     IF playery < 23 THEN
-        popular "0"
-        escenario(playerx, playery) = elementoBase
-        playery = playery + 1
-        popular "X"
-        escenario(playerx, playery) = elementoBase
-        dibujarEscenarioGrafico
+        IF escenario(playerx, playery + 1).bloqueante = "N" THEN
+            popular "0"
+            escenario(playerx, playery) = elementoBase
+            playery = playery + 1
+            popular "X"
+            escenario(playerx, playery) = elementoBase
+            dibujarEscenarioGrafico
+        END IF
     END IF
 END IF
 
 REM left
 IF tecla$ = CHR$(0) + CHR$(75) THEN
     IF playerx > 1 THEN
-        popular "0"
-        escenario(playerx, playery) = elementoBase
-        playerx = playerx - 1
-        popular "X"
-        escenario(playerx, playery) = elementoBase
-        dibujarEscenarioGrafico
+        IF escenario(playerx - 1, playery).bloqueante = "N" THEN
+            popular "0"
+            escenario(playerx, playery) = elementoBase
+            playerx = playerx - 1
+            popular "X"
+            escenario(playerx, playery) = elementoBase
+            dibujarEscenarioGrafico
+        END IF
     END IF
 END IF
 
 REM right
 IF tecla$ = CHR$(0) + CHR$(77) THEN
     IF playerx < 31 THEN
-        popular "0"
-        escenario(playerx, playery) = elementoBase
-        playerx = playerx + 1
-        popular "X"
-        escenario(playerx, playery) = elementoBase
-        dibujarEscenarioGrafico
+        IF escenario(playerx + 1, playery).bloqueante = "N" THEN
+            popular "0"
+            escenario(playerx, playery) = elementoBase
+            playerx = playerx + 1
+            popular "X"
+            escenario(playerx, playery) = elementoBase
+            dibujarEscenarioGrafico
+        END IF
     END IF
 END IF
 
@@ -175,27 +181,118 @@ END SUB
 
 REM *******************PERSONAJE**********************
 SUB dibujarPersonaje (posx, posy)
-color_personaje = 0
+DIM personaje%(20, 20)
 SELECT CASE clase$
     CASE "Guerrero"
-        color_personaje = color_personaje + 1
+        RESTORE personaG
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                READ personaje%(x, y)
+            NEXT
+        NEXT
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                PSET (posx * 20 + x, posy * 20 + y), personaje%(x, y)
+            NEXT
+        NEXT
     CASE "Mago"
-        color_personaje = color_personaje + 2
+        RESTORE personaM
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                READ personaje%(x, y)
+            NEXT
+        NEXT
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                PSET (posx * 20 + x, posy * 20 + y), personaje%(x, y)
+            NEXT
+        NEXT
+        RESTORE
+
 END SELECT
-SELECT CASE raza$
-    CASE "Humano"
-        color_personaje = color_personaje + 3
-    CASE "Mago"
-        color_personaje = color_personaje + 4
-END SELECT
-LINE (posx * 20, posy * 20)-(posx * 20 + 20, posy * 20 + 20), color_personaje, BF
+personaG:
+DATA 00,00,00,15,00,00,00,07,07,07,07,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,15,00,00,07,07,07,07,07,07,07,07,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,07,07,07,07,07,07,07,07,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,00,05,05,05,05,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,05,05,05,05,00,00,00,00,00,00,00,00
+DATA 00,00,06,06,06,06,08,08,14,14,14,14,08,18,06,06,06,06,00,00
+DATA 00,00,01,01,00,00,00,00,14,14,14,14,00,00,00,00,00,00,00,00
+DATA 00,00,01,01,00,00,00,00,14,14,14,14,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,14,14,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,14,14,14,14,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,00,00,00,00,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,06,00,00,00,00,00,00,06,00,00,00,00,00,00
+DATA 00,00,00,00,00,06,00,00,00,00,00,00,00,00,06,00,00,00,00,00
+DATA 00,00,00,00,14,00,00,00,00,00,00,00,00,00,00,14,00,00,00,00
+DATA 00,00,00,14,00,00,00,00,00,00,00,00,00,00,00,00,14,00,00,00
+DATA 00,00,14,00,00,00,00,00,00,00,00,00,00,00,00,00,00,14,00,00
+personaM:
+DATA 00,00,00,00,00,00,00,00,05,05,05,05,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,05,05,05,05,05,05,05,05,00,00,00,00,00,00
+DATA 00,00,00,00,05,05,05,05,05,05,05,05,05,05,05,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,09,06,06,06,06,06,06,09,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,09,09,05,05,05,05,09,09,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,09,09,05,05,05,05,09,09,00,00,00,00,00,00
+DATA 00,00,05,05,05,05,05,05,05,05,05,05,05,05,05,05,05,05,00,00
+DATA 00,00,00,00,09,09,09,09,05,05,05,05,09,09,09,09,00,00,00,00
+DATA 00,00,00,00,09,09,09,09,05,05,05,05,09,09,09,09,00,00,00,00
+DATA 00,00,00,00,09,09,09,09,00,05,05,09,09,09,09,09,00,00,00,00
+DATA 00,00,00,00,09,09,09,09,05,05,05,05,09,09,09,09,00,00,00,00
+DATA 00,00,00,09,09,09,09,05,09,09,09,00,05,09,09,09,09,00,00,00
+DATA 00,00,00,09,09,09,05,09,09,09,09,09,09,05,09,09,09,00,00,00
+DATA 00,00,00,09,09,05,09,09,09,09,09,09,09,09,05,00,09,00,00,00
+DATA 00,00,00,09,05,09,09,09,09,09,09,09,09,09,09,05,09,00,00,00
+DATA 00,00,00,05,09,09,09,09,09,09,09,09,09,09,09,09,05,00,00,00
+DATA 00,00,05,09,09,09,09,09,09,09,09,09,09,09,09,09,09,05,00,00
+
 END SUB
 
 SUB dibujarObjeto (posx, posy, nombre$)
-SELECT CASE nombre$
+DIM cosa%(20, 20)
+SELECT CASE RTRIM$(nombre$)
     CASE "Mesa"
-        LINE (posx * 20, posy * 20)-(posx * 20 + 20, posy * 20 + 20), 2, BF
+        RESTORE mesa
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                READ cosa%(x, y)
+            NEXT
+        NEXT
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                PSET (posx * 20 + x, posy * 20 + y), cosa%(x, y)
+            NEXT
+        NEXT
+
 END SELECT
+mesa:
+DATA 00,00,00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06
+DATA 00,00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,00,06
+DATA 00,00,15,15,00,00,07,07,07,07,07,07,07,07,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,06,06,06,06,06,06,00,00,00,00,00,00,00
+DATA 00,00,15,15,00,00,00,00,05,05,05,05,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,05,05,05,05,00,00,00,00,00,00,00,00
+DATA 00,00,06,06,06,06,08,08,14,14,14,14,08,18,06,06,06,06,00,00
+DATA 00,00,01,01,00,00,00,00,14,14,14,14,00,00,00,00,00,00,00,00
+DATA 00,00,01,01,00,00,00,00,14,14,14,14,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,14,14,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,14,14,14,14,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,00,00,00,00,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,06,00,00,00,00,00,00,06,00,00,00,00,00,00
+DATA 00,00,00,00,00,06,00,00,00,00,00,00,00,00,06,00,00,00,00,00
+DATA 00,00,00,00,14,00,00,00,00,00,00,00,00,00,00,14,00,00,00,00
+DATA 00,00,00,14,00,00,00,00,00,00,00,00,00,00,00,00,14,00,00,00
+DATA 00,00,14,00,00,00,00,00,00,00,00,00,00,00,00,00,00,14,00,00
 END SUB
 
 SUB popular (simbolo$)
@@ -210,4 +307,21 @@ SELECT CASE simbolo$
         elementoBase.nombre = "Mesa"
         elementoBase.bloqueante = "S"
 END SELECT
+END SUB
+
+SUB presentacion
+CLS
+LOCATE 10, 10
+PRINT "______   ___   _____  _____  _____  ______ ______  _____"
+LOCATE 11, 10
+PRINT "| ___ \ / _ \ /  ___||_   _|/  __ \ | ___ \| ___ \|  __ \"
+LOCATE 12, 10
+PRINT "| |_/ // /_\ \\ `--.   | |  | /  \/ | |_/ /| |_/ /| |  \/"
+LOCATE 13, 10
+PRINT "| ___ \|  _  | `--. \  | |  | |     |    / |  __/ | | __"
+LOCATE 14, 10
+PRINT "| |_/ /| | | |/\__/ / _| |_ | \__/\ | |\ \ | |    | |_\ \"
+LOCATE 15, 10
+PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
+SLEEP
 END SUB
