@@ -5,3 +5,8 @@
 -Agregado gráfico para guerrero
 -Agregado gráfico para mesa
 -Quitado selección de modo gráfico (falta quitar el método de selección)
+
+0.0.2A
+
+-Agregada clase bárbaro
+-Agregados stats iniciales

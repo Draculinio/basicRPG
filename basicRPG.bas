@@ -1,4 +1,3 @@
-
 REM ------------------------------BASIC RPG--------------------------
 
 REM ----ENTORNO----
@@ -12,8 +11,11 @@ TYPE elemento
     sabiduria AS INTEGER
     inteligencia AS INTEGER
     carisma AS INTEGER
-
+    pv AS INTEGER
 END TYPE
+
+DIM SHARED personaje AS elemento
+personaje.bloqueante = "N"
 
 DIM SHARED elementoBase AS elemento
 elementoBase.nombre = "Vacio"
@@ -36,7 +38,6 @@ playerx = 1
 playery = 1
 REM ----FIN DEL ENTORNO----
 SCREEN 12
-'seleccionarPantalla
 crearPersonaje
 presentacion
 REM ----CREACION DEL ESCENARIO----
@@ -61,9 +62,75 @@ DO
 LOOP UNTIL flagSalida = 1
 
 SUB crearPersonaje ()
+DIM caracteristicas%(6) 'array de puntajes para asignar
+DIM sumadorCaracteristica(4) 'array para meter cada caracteristica
 INPUT "Ingrese el nombre del jugador: ", nombre$
+personaje.nombre = nombre$
 seleccionarRaza
 seleccionarClase
+
+FOR x = 1 TO 6
+    caracteristica% = 0
+    FOR y = 1 TO 4
+        sumadorCaracteristica(y) = 0
+        sumadorCaracteristica(y) = dado(6)
+    NEXT
+    'Ordeno el array
+    FOR a = 1 TO 4
+        FOR b = 1 TO 4
+            IF sumadorCaracteristica(b) > sumadorCaracteristica(a) THEN SWAP sumadorCaracteristica(a), sumadorCaracteristica(b)
+        NEXT
+    NEXT
+    REM PRINT sumadorCaracteristica(1)
+    REM SLEEP
+    'sumo los 3 mayores y los meto en caracterisiticas
+    FOR a = 1 TO 3
+        caracteristica% = caracteristica% + sumadorCaracteristica(a)
+    NEXT
+    caracteristicas%(x) = caracteristica%
+NEXT
+'ordeno el array de caracteristicas
+FOR a = 1 TO 6
+    FOR b = 1 TO 6
+        IF caracteristicas%(b) < caracteristicas%(a) THEN SWAP caracteristicas%(a), caracteristicas%(b)
+    NEXT
+NEXT
+SELECT CASE clase$
+    CASE "Barbaro"
+        personaje.fuerza = caracteristicas%(1)
+        personaje.destreza = caracteristicas%(2)
+        personaje.constitucion = caracteristicas%(3)
+        personaje.sabiduria = caracteristicas%(4)
+        personaje.carisma = caracteristicas%(5)
+        personaje.inteligencia = caracteristicas%(6)
+    CASE "Mago"
+        personaje.inteligencia = caracteristicas%(1)
+        personaje.sabiduria = caracteristicas%(2)
+        personaje.destreza = caracteristicas%(3)
+        personaje.constitucion = caracteristicas%(4)
+        personaje.carisma = caracteristicas%(5)
+        personaje.fuerza = caracteristicas%(6)
+    CASE "Guerrero"
+        personaje.fuerza = caracteristicas%(1)
+        personaje.destreza = caracteristicas%(2)
+        personaje.constitucion = caracteristicas%(3)
+        personaje.inteligencia = caracteristicas%(4)
+        personaje.sabiduria = caracteristicas%(5)
+        personaje.carisma = caracteristicas%(6)
+END SELECT
+
+'Por £ltimo los modificadores de raza
+SELECT CASE raza$
+    CASE "Elfo"
+        personaje.destreza = personaje.destreza + 2
+        personaje.constitucion = personaje.constitucion - 2
+    CASE "Enano"
+        personaje.constitucion = personaje.constitucion + 2
+        personaje.carisma = personaje.carisma - 2
+    CASE "Gnomo"
+        personaje.constitucion = personaje.constitucion + 2
+        personaje.fuerza = personaje.fuerza - 2
+END SELECT
 END SUB
 
 SUB seleccionarPantalla ()
@@ -91,9 +158,10 @@ FOR y = 1 TO 23
 NEXT
 LOCATE 1, 1
 PRINT nombre$ + "(" + STR$(playerx) + "," + STR$(playery) + ")"
-LOCATE 1, 40
+LOCATE 1, 20
 PRINT clase$ + " " + raza$
-LOCATE 1, 60
+LOCATE 1, 40
+PRINT "F: " + STR$(personaje.fuerza) + " D: " + STR$(personaje.destreza) + " C: " + STR$(personaje.constitucion) + " S: " + STR$(personaje.sabiduria) + " I: " + STR$(personaje.inteligencia) + " CM: " + STR$(personaje.carisma)
 LINE (0, 15)-(640, 15)
 
 END SUB
@@ -163,7 +231,7 @@ recibirTecla = retorno
 END FUNCTION
 
 SUB seleccionarRaza ()
-PRINT "Seleccione raza (h-Humano/e-Elfo): "
+PRINT "Seleccione raza (h-Humano/e-Elfo/d-Enano/g-Gnomo): "
 SLEEP
 k$ = UCASE$(INKEY$)
 SELECT CASE k$
@@ -171,17 +239,18 @@ SELECT CASE k$
         raza$ = "Humano"
     CASE "E"
         raza$ = "Elfo"
+    CASE "D"
+        clase$ = "Enano"
+    CASE "G"
+        clase$ = "Gnomo"
     CASE ELSE
         raza$ = "Humano"
-    CASE "E"
-        clase$ = "Enano"
-
 END SELECT
 END SUB
 
 SUB seleccionarClase ()
 k$ = ""
-PRINT "Seleccione clase (g-Guerrero/m-Mago/e-Enano): "
+PRINT "Seleccione clase (g-Guerrero/m-Mago/b-B rbaro): "
 SLEEP
 k$ = UCASE$(INKEY$)
 SELECT CASE k$
@@ -189,6 +258,8 @@ SELECT CASE k$
         clase$ = "Guerrero"
     CASE "M"
         clase$ = "Mago"
+    CASE "B"
+        clase$ = "Barbaro"
     CASE ELSE
         clase$ = "Guerrero"
 END SELECT
@@ -223,7 +294,18 @@ SELECT CASE clase$
                 PSET (posx * 20 + x, posy * 20 + y), personaje%(x, y)
             NEXT
         NEXT
-        RESTORE
+    CASE "Barbaro"
+        RESTORE personaB
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                READ personaje%(x, y)
+            NEXT
+        NEXT
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                PSET (posx * 20 + x, posy * 20 + y), personaje%(x, y)
+            NEXT
+        NEXT
 
 END SELECT
 personaG:
@@ -268,6 +350,27 @@ DATA 00,00,00,09,09,05,09,09,09,09,09,09,09,09,05,00,09,00,00,00
 DATA 00,00,00,09,05,09,09,09,09,09,09,09,09,09,09,05,09,00,00,00
 DATA 00,00,00,05,09,09,09,09,09,09,09,09,09,09,09,09,05,00,00,00
 DATA 00,00,05,09,09,09,09,09,09,09,09,09,09,09,09,09,09,05,00,00
+personaB:
+DATA 00,00,00,00,00,00,00,00,15,15,15,15,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,06,06,06,06,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,06,06,06,06,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,06,06,06,06,00,00,00,00,00,00,00,00
+DATA 00,07,07,00,00,00,00,00,06,06,06,06,00,00,00,00,00,00,00,00
+DATA 07,07,07,07,00,00,00,00,00,06,06,00,00,00,00,00,00,00,00,00
+DATA 00,07,07,00,00,00,06,06,06,06,06,06,06,06,00,00,00,00,00,00
+DATA 00,07,07,00,00,06,00,06,06,06,06,06,06,00,06,06,00,00,00,00
+DATA 00,07,07,00,06,06,00,06,06,06,06,06,06,00,06,06,00,00,00,00
+DATA 00,07,07,06,06,00,00,06,06,06,06,06,06,00,06,06,00,00,00,00
+DATA 00,07,07,00,00,00,00,06,06,06,06,06,06,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,00,00,04,04,04,04,04,04,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,00,00,04,04,04,04,04,04,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,00,00,04,04,00,00,04,04,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,06,00,00,06,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,06,00,00,06,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,06,00,00,06,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,06,00,00,06,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,04,04,00,00,04,04,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,04,04,00,00,04,04,00,00,00,00,00,00,00
 
 END SUB
 
@@ -341,3 +444,9 @@ LOCATE 15, 10
 PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
 SLEEP
 END SUB
+
+FUNCTION dado (caras AS INTEGER)
+resultado% = INT(RND * caras) + 1
+dado = resultado%
+END FUNCTION
+
