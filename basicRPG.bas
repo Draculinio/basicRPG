@@ -11,7 +11,7 @@ TYPE elemento
     sabiduria AS INTEGER
     inteligencia AS INTEGER
     carisma AS INTEGER
-    pv AS INTEGER
+    puntosGolpe AS INTEGER
 END TYPE
 
 DIM SHARED personaje AS elemento
@@ -26,6 +26,7 @@ elemento.constitucion = 0
 elemento.sabiduria = 0
 elemento.inteligencia = 0
 elemento.carisma = 0
+elemento.puntosGolpe = 0
 
 DIM SHARED escenario(1 TO 31, 1 TO 23) AS elemento
 REM Variables del jugador
@@ -95,6 +96,7 @@ FOR a = 1 TO 6
         IF caracteristicas%(b) < caracteristicas%(a) THEN SWAP caracteristicas%(a), caracteristicas%(b)
     NEXT
 NEXT
+'Asigno caracter¡sticas
 SELECT CASE clase$
     CASE "Barbaro"
         personaje.fuerza = caracteristicas%(1)
@@ -103,6 +105,7 @@ SELECT CASE clase$
         personaje.sabiduria = caracteristicas%(4)
         personaje.carisma = caracteristicas%(5)
         personaje.inteligencia = caracteristicas%(6)
+        personaje.puntosGolpe = personaje.constitucion + 12
     CASE "Mago"
         personaje.inteligencia = caracteristicas%(1)
         personaje.sabiduria = caracteristicas%(2)
@@ -110,6 +113,7 @@ SELECT CASE clase$
         personaje.constitucion = caracteristicas%(4)
         personaje.carisma = caracteristicas%(5)
         personaje.fuerza = caracteristicas%(6)
+        personaje.puntosGolpe = personaje.constitucion + 4
     CASE "Guerrero"
         personaje.fuerza = caracteristicas%(1)
         personaje.destreza = caracteristicas%(2)
@@ -117,6 +121,7 @@ SELECT CASE clase$
         personaje.inteligencia = caracteristicas%(4)
         personaje.sabiduria = caracteristicas%(5)
         personaje.carisma = caracteristicas%(6)
+        personaje.puntosGolpe = personaje.constitucion + 10
 END SELECT
 
 'Por £ltimo los modificadores de raza
@@ -131,6 +136,7 @@ SELECT CASE raza$
         personaje.constitucion = personaje.constitucion + 2
         personaje.fuerza = personaje.fuerza - 2
 END SELECT
+
 END SUB
 
 SUB seleccionarPantalla ()
