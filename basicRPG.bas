@@ -12,6 +12,15 @@ TYPE elemento
     inteligencia AS INTEGER
     carisma AS INTEGER
     puntosGolpe AS INTEGER
+    enemigo AS STRING * 1
+END TYPE
+
+TYPE enemigo
+    tamano AS STRING * 20
+    dado AS INTEGER
+    modificadorDado AS INTEGER
+    velocidad AS INTEGER
+    velocidad2 AS INTEGER
 END TYPE
 
 DIM SHARED personaje AS elemento
@@ -52,6 +61,8 @@ popular "X"
 escenario(playerx, playery) = elementoBase
 popular "M"
 escenario(10, 10) = elementoBase
+popular "b"
+escenario(30, 5) = elementoBase
 REM ----FIN DE CREACION DE ESCENARIO----
 
 dibujarEscenarioGrafico
@@ -159,6 +170,8 @@ FOR y = 1 TO 23
                 dibujarPersonaje x, y
             CASE "Mesa"
                 dibujarObjeto x, y, escenario(x, y).nombre
+            CASE "Murcielago"
+                dibujarEnemigo x, y, escenario(x, y).nombre
         END SELECT
     NEXT
 NEXT
@@ -380,6 +393,47 @@ DATA 00,00,00,00,00,00,00,04,04,00,00,04,04,00,00,00,00,00,00,00
 
 END SUB
 
+SUB dibujarEnemigo (posx, posy, nombre$)
+DIM enemigo%(20, 20)
+SELECT CASE RTRIM$(nombre$)
+    CASE "Murcielago"
+        RESTORE murcielago
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                READ enemigo%(x, y)
+            NEXT
+        NEXT
+        FOR y = 1 TO 20
+            FOR x = 1 TO 20
+                PSET (posx * 20 + x, posy * 20 + y), enemigo%(x, y)
+            NEXT
+        NEXT
+
+END SELECT
+murcielago:
+DATA 00,00,00,00,00,00,00,01,01,00,00,01,01,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,01,01,00,00,01,01,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,01,01,01,01,01,01,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,01,01,01,01,01,01,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,01,00,01,01,00,01,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,01,01,01,01,01,01,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,01,01,01,01,01,01,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,01,01,01,01,01,01,01,01,00,00,00,00,00,00
+DATA 00,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,00
+DATA 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01
+DATA 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01
+DATA 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01
+DATA 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01
+DATA 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01
+DATA 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01
+DATA 00,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,00
+DATA 00,00,00,00,00,00,01,01,01,01,01,01,01,01,01,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,01,01,00,00,00,01,01,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,01,01,00,00,00,01,01,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,01,01,01,01,00,01,01,01,01,00,00,00,00,00
+
+END SUB
+
 SUB dibujarObjeto (posx, posy, nombre$)
 DIM cosa%(20, 20)
 SELECT CASE RTRIM$(nombre$)
@@ -430,6 +484,9 @@ SELECT CASE simbolo$
         elementoBase.bloqueante = "S"
     CASE "M"
         elementoBase.nombre = "Mesa"
+        elementoBase.bloqueante = "S"
+    CASE "b"
+        elementoBase.nombre = "Murcielago"
         elementoBase.bloqueante = "S"
 END SELECT
 END SUB
