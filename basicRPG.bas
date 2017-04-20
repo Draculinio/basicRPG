@@ -21,8 +21,12 @@ TYPE enemigo
     modificadorDado AS INTEGER
     velocidad AS INTEGER
     velocidad2 AS INTEGER
+    posx AS INTEGER
+    posy AS INTEGER
+    simbolo AS STRING * 1
 END TYPE
 
+DIM SHARED enemigos(10) AS enemigo
 DIM SHARED personaje AS elemento
 personaje.bloqueante = "N"
 
@@ -49,6 +53,7 @@ playery = 1
 REM ----FIN DEL ENTORNO----
 SCREEN 12
 crearPersonaje
+crearEnemigo "Murcielago", 1, 30, 5
 presentacion
 REM ----CREACION DEL ESCENARIO----
 FOR x = 1 TO 31
@@ -61,8 +66,8 @@ popular "X"
 escenario(playerx, playery) = elementoBase
 popular "M"
 escenario(10, 10) = elementoBase
-popular "b"
-escenario(30, 5) = elementoBase
+popular enemigos(1).simbolo
+escenario(enemigos(1).posx, enemigos(1).posy) = elementoBase
 REM ----FIN DE CREACION DE ESCENARIO----
 
 dibujarEscenarioGrafico
@@ -148,6 +153,19 @@ SELECT CASE raza$
         personaje.fuerza = personaje.fuerza - 2
 END SELECT
 
+END SUB
+SUB crearEnemigo (tipo$, posicion, posx, posy)
+SELECT CASE tipo$
+    CASE "Murcielago"
+        enemigos(posicion).tamano = "Diminuto"
+        enemigos(posicion).dado = 8
+        enemigos(posicion).modificadorDado = 0.25
+        enemigos(posicion).velocidad = 1
+        enemigos(posicion).velocidad2 = 8
+        enemigos(posicion).posx = posx
+        enemigos(posicion).posy = posy
+        enemigos(posicion).simbolo = "b"
+END SELECT
 END SUB
 
 SUB seleccionarPantalla ()
