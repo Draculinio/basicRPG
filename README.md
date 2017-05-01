@@ -1,3 +1,10 @@
+0.0.4A
+
+-Heavy refactor
+-El escenario es de strings.
+-Todos los dibujos son ahora parte del mismo sub de dibujarCosas
+-Desaparece el sub "popular" porque ahora son todos strings.
+
 0.0.3A
 
 -Agregado type de enemigos
