@@ -25,6 +25,7 @@ TYPE elemento
 END TYPE
 
 TYPE enemigo
+    nombre AS STRING * 20
     tamano AS STRING * 20
     dado AS INTEGER
     modificadorDado AS INTEGER
@@ -32,13 +33,12 @@ TYPE enemigo
     velocidad2 AS INTEGER
     posx AS INTEGER
     posy AS INTEGER
-    simbolo AS STRING * 1
 END TYPE
 
 DIM SHARED enemigos(10) AS enemigo
 DIM SHARED heroe AS personaje
-
-DIM SHARED escenario(1 TO 31, 1 TO 23) AS STRING
+DIM SHARED elementos(10) AS elemento
+DIM SHARED escenario(1 TO 31, 1 TO 23) AS INTEGER
 REM Variables del jugador
 heroe.posx = 1
 heroe.posy = 1
@@ -46,18 +46,20 @@ REM ----FIN DEL ENTORNO----
 SCREEN 12
 crearPersonaje
 crearEnemigo "Murcielago", 1, 30, 5
+crearElemento "Mesa", 1, 10, 10
 presentacion
 REM ----CREACION DEL ESCENARIO----
 FOR x = 1 TO 31
     FOR y = 1 TO 23
-        escenario(x, y) = "0"
+        escenario(x, y) = 0
     NEXT
 NEXT
-escenario(heroe.posx, heroe.posy) = "X"
-escenario(enemigos(1).posx,enemigos(1).posy)=enemigos(1).simbolo
-escenario(10, 10) = "M"
+escenario(heroe.posx, heroe.posy) = 1000
+escenario(enemigos(1).posx,enemigos(1).posy)=1
+escenario(10, 10) = 101
 REM ----FIN DE CREACION DE ESCENARIO----
 
+REM ----LOOP PRINCIPAL----
 dibujarEscenarioGrafico
 
 flagSalida = 0
@@ -65,6 +67,7 @@ DO
     k$ = INKEY$
     flagSalida = recibirTecla(k$)
 LOOP UNTIL flagSalida = 1
+REM ----FIN LOOP PRINCIPAL
 
 SUB crearPersonaje ()
 DIM caracteristicas%(6) 'array de puntajes para asignar
@@ -73,7 +76,6 @@ INPUT "Ingrese el nombre del jugador: ", nombre$
 heroe.nombre = nombre$
 seleccionarRaza
 seleccionarClase
-
 FOR x = 1 TO 6
     caracteristica% = 0
     FOR y = 1 TO 4
@@ -145,6 +147,7 @@ END SUB
 SUB crearEnemigo (tipo$, posicion, posx, posy)
 SELECT CASE tipo$
     CASE "Murcielago"
+        enemigos(posicion).nombre = tipo$
         enemigos(posicion).tamano = "Diminuto"
         enemigos(posicion).dado = 8
         enemigos(posicion).modificadorDado = 0.25
@@ -152,7 +155,16 @@ SELECT CASE tipo$
         enemigos(posicion).velocidad2 = 8
         enemigos(posicion).posx = posx
         enemigos(posicion).posy = posy
-        enemigos(posicion).simbolo = "m"
+END SELECT
+END SUB
+
+SUB crearElemento (tipo$,posicion,posx,posy)
+SELECT CASE tipo$
+    CASE "Mesa"
+        elementos(posicion).nombre = tipo$
+        elementos(posicion).bloqueante = "S"
+        elementos(posicion).posx = posx
+        elementos(posicion).posy = posy
 END SELECT
 END SUB
 
@@ -161,9 +173,9 @@ retorno = 0
 REM up
 IF tecla$ = CHR$(0) + CHR$(72) THEN
     IF heroe.posy > 1 THEN
-        IF escenario(heroe.posx, heroe.posy - 1)= "0" THEN
-            escenario(heroe.posx,heroe.posy)="0"
-            escenario(heroe.posx,heroe.posy-1)="X"    
+        IF escenario(heroe.posx, heroe.posy - 1)= 0 THEN
+            escenario(heroe.posx,heroe.posy)=0
+            escenario(heroe.posx,heroe.posy-1)=1000    
             heroe.posy = heroe.posy - 1
             dibujarEscenarioGrafico
         END IF
@@ -173,9 +185,9 @@ END IF
 REM down
 IF tecla$ = CHR$(0) + CHR$(80) THEN
     IF heroe.posy < 23 THEN
-        IF escenario(heroe.posx, heroe.posy + 1) = "0" THEN
-            escenario(heroe.posx,heroe.posy)="0"
-            escenario(heroe.posx,heroe.posy+1)="X"
+        IF escenario(heroe.posx, heroe.posy + 1) = 0 THEN
+            escenario(heroe.posx,heroe.posy)=0
+            escenario(heroe.posx,heroe.posy+1)=1000
             heroe.posy = heroe.posy + 1
             dibujarEscenarioGrafico
         END IF
@@ -185,9 +197,9 @@ END IF
 REM left
 IF tecla$ = CHR$(0) + CHR$(75) THEN
     IF heroe.posx > 1 THEN
-        IF escenario(heroe.posx - 1, heroe.posy)="0" THEN
-            escenario(heroe.posx,heroe.posy)="0"
-            escenario(heroe.posx-1,heroe.posy)="X"
+        IF escenario(heroe.posx - 1, heroe.posy)=0 THEN
+            escenario(heroe.posx,heroe.posy)=0
+            escenario(heroe.posx-1,heroe.posy)=1000
             heroe.posx = heroe.posx - 1
             dibujarEscenarioGrafico
         END IF
@@ -197,9 +209,9 @@ END IF
 REM right
 IF tecla$ = CHR$(0) + CHR$(77) THEN
     IF heroe.posx < 31 THEN
-        IF escenario(heroe.posx + 1, heroe.posy)="0" THEN
-            escenario(heroe.posx,heroe.posy)="0"
-            escenario(heroe.posx+1,heroe.posy)="X"
+        IF escenario(heroe.posx + 1, heroe.posy)=0 THEN
+            escenario(heroe.posx,heroe.posy)=0
+            escenario(heroe.posx+1,heroe.posy)=1000
             heroe.posx = heroe.posx + 1
             dibujarEscenarioGrafico
         END IF
@@ -211,6 +223,10 @@ IF tecla$ = CHR$(27) THEN
 END IF
 recibirTecla = retorno
 END FUNCTION
+
+SUB moverEnemigo()
+
+END SUB
 
 SUB seleccionarRaza ()
 PRINT "Seleccione raza (h-Humano/e-Elfo/d-Enano/g-Gnomo): "
@@ -272,13 +288,13 @@ px = 0
 py = 0
 FOR y = 1 TO 23
     FOR x = 1 TO 31
-        SELECT CASE RTRIM$(escenario(x, y))
-            CASE "X"
+        SELECT CASE escenario(x, y)
+            CASE 1000
                 dibujarCosas x, y, RTRIM$(heroe.clase)
-            CASE "m"
-                dibujarCosas x, y, "Murcielago"
-            CASE "M"
-                dibujarCosas x, y, "Mesa"
+            CASE 1 TO 10
+                dibujarCosas x,y, RTRIM$(enemigos(escenario(x,y)).nombre)
+            CASE 101 TO 110
+                dibujarCosas x, y, RTRIM$(elementos(escenario(x,y)-100).nombre)
         END SELECT
     NEXT
 NEXT
@@ -303,8 +319,7 @@ SELECT CASE cosaADibujar$
     CASE "Murcielago"
         RESTORE Murcielago
     CASE "Mesa"
-        RESTORE Mesa
-
+        LOCATE 15, 40
 END SELECT
 FOR y = 1 TO 20
     FOR x = 1 TO 20
@@ -400,7 +415,7 @@ DATA 00,00,00,00,00,00,01,01,01,01,01,01,01,01,01,00,00,00,00,00
 DATA 00,00,00,00,00,00,00,01,01,00,00,00,01,01,00,00,00,00,00,00
 DATA 00,00,00,00,00,00,00,01,01,00,00,00,01,01,00,00,00,00,00,00
 DATA 00,00,00,00,00,00,01,01,01,01,00,01,01,01,01,00,00,00,00,00
-mesa:
+Mesa:
 DATA 00,00,00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06
 DATA 00,00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06
 DATA 00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,00,06
@@ -421,6 +436,7 @@ DATA 06,00,00,00,06,00,00,00,00,00,00,00,00,00,00,06,00,00,00,06
 DATA 06,00,00,00,06,00,00,00,00,00,00,00,00,00,00,06,00,00,00,06
 DATA 06,00,00,00,06,00,00,00,00,00,00,00,00,00,00,06,00,00,00,06
 DATA 06,00,00,00,06,00,00,00,00,00,00,00,00,00,00,06,00,00,00,06
+
 END SUB
 
 REM -----------------------------------FIN FUNCIONES DE DIBUJO-------------------------------------

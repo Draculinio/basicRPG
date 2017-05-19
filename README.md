@@ -1,3 +1,11 @@
+0.0.5A
+
+-HEAVY refactor
+-Escenario ahora de integers
+-Heroes desde el 1000
+-Elementos desde el 100
+
+
 0.0.4A
 
 -Heavy refactor
