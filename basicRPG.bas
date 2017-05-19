@@ -45,8 +45,11 @@ heroe.posy = 1
 REM ----FIN DEL ENTORNO----
 SCREEN 12
 crearPersonaje
+REM ---ESCENARIO---
+inicializarEnemigos
 crearEnemigo "Murcielago", 1, 30, 5
 crearElemento "Mesa", 1, 10, 10
+REM ---FIN ESCENARIO---
 presentacion
 REM ----CREACION DEL ESCENARIO----
 FOR x = 1 TO 31
@@ -61,11 +64,11 @@ REM ----FIN DE CREACION DE ESCENARIO----
 
 REM ----LOOP PRINCIPAL----
 dibujarEscenarioGrafico
-
 flagSalida = 0
 DO
     k$ = INKEY$
     flagSalida = recibirTecla(k$)
+    
 LOOP UNTIL flagSalida = 1
 REM ----FIN LOOP PRINCIPAL
 
@@ -146,6 +149,15 @@ END SELECT
 END SUB
 SUB crearEnemigo (tipo$, posicion, posx, posy)
 SELECT CASE tipo$
+    CASE "Nulo"
+        enemigos(posicion).nombre = tipo$
+        enemigos(posicion).tamano = "Nulo"
+        enemigos(posicion).dado = 0
+        enemigos(posicion).modificadorDado = 0
+        enemigos(posicion).velocidad = 0
+        enemigos(posicion).velocidad2 = 0
+        enemigos(posicion).posx = posx
+        enemigos(posicion).posy = posy
     CASE "Murcielago"
         enemigos(posicion).nombre = tipo$
         enemigos(posicion).tamano = "Diminuto"
@@ -156,6 +168,12 @@ SELECT CASE tipo$
         enemigos(posicion).posx = posx
         enemigos(posicion).posy = posy
 END SELECT
+END SUB
+
+SUB inicializarEnemigos()
+    FOR a = 1 TO 10
+        crearEnemigo "Nulo",a,0,0
+    NEXT
 END SUB
 
 SUB crearElemento (tipo$,posicion,posx,posy)
@@ -177,6 +195,7 @@ IF tecla$ = CHR$(0) + CHR$(72) THEN
             escenario(heroe.posx,heroe.posy)=0
             escenario(heroe.posx,heroe.posy-1)=1000    
             heroe.posy = heroe.posy - 1
+            moverEnemigo
             dibujarEscenarioGrafico
         END IF
     END IF
@@ -189,6 +208,7 @@ IF tecla$ = CHR$(0) + CHR$(80) THEN
             escenario(heroe.posx,heroe.posy)=0
             escenario(heroe.posx,heroe.posy+1)=1000
             heroe.posy = heroe.posy + 1
+            moverEnemigo
             dibujarEscenarioGrafico
         END IF
     END IF
@@ -201,6 +221,7 @@ IF tecla$ = CHR$(0) + CHR$(75) THEN
             escenario(heroe.posx,heroe.posy)=0
             escenario(heroe.posx-1,heroe.posy)=1000
             heroe.posx = heroe.posx - 1
+            moverEnemigo
             dibujarEscenarioGrafico
         END IF
     END IF
@@ -213,6 +234,7 @@ IF tecla$ = CHR$(0) + CHR$(77) THEN
             escenario(heroe.posx,heroe.posy)=0
             escenario(heroe.posx+1,heroe.posy)=1000
             heroe.posx = heroe.posx + 1
+            moverEnemigo
             dibujarEscenarioGrafico
         END IF
     END IF
@@ -225,7 +247,45 @@ recibirTecla = retorno
 END FUNCTION
 
 SUB moverEnemigo()
-
+    FOR a = 1 TO 10
+        IF RTRIM$(enemigos(a).nombre)<>"Nulo" THEN
+            movimiento = dado(5)
+            SELECT CASE movimiento
+                CASE 1 'ARRIBA
+                    IF enemigos(a).posy > 1 THEN
+                        IF escenario(enemigos(a).posx, enemigos(a).posy - 1)= 0 THEN
+                            escenario(enemigos(a).posx,enemigos(a).posy)=0
+                            escenario(enemigos(a).posx,enemigos(a).posy-1)=a    
+                            enemigos(a).posy = enemigos(a).posy - 1
+                        END IF
+                    END IF      
+                CASE 2 'ABAJO
+                    IF enemigos(a).posy < 23 THEN
+                        IF escenario(enemigos(a).posx, enemigos(a).posy + 1) = 0 THEN
+                            escenario(enemigos(a).posx,enemigos(a).posy)=0
+                            escenario(enemigos(a).posx,enemigos(a).posy+1)=a
+                            enemigos(a).posy = enemigos(a).posy + 1
+                        END IF
+                    END IF
+                CASE 3 'DERECHA
+                    IF enemigos(a).posx < 31 THEN
+                        IF escenario(enemigos(a).posx + 1, enemigos(a).posy)=0 THEN
+                            escenario(enemigos(a).posx,enemigos(a).posy)=0
+                            escenario(enemigos(a).posx+1,enemigos(a).posy)=a
+                            enemigos(a).posx = enemigos(a).posx + 1
+                        END IF
+                    END IF
+                CASE 4 'IZQUIERDA
+                    IF enemigos(a).posx > 1 THEN
+                        IF escenario(enemigos(a).posx - 1, enemigos(a).posy)=0 THEN
+                            escenario(enemigos(a).posx,enemigos(a).posy)=0
+                            escenario(enemigos(a).posx-1,enemigos(a).posy)=a
+                            enemigos(a).posx = enemigos(a).posx - 1
+                        END IF
+                    END IF
+            END SELECT
+        END IF
+    NEXT
 END SUB
 
 SUB seleccionarRaza ()
@@ -279,6 +339,8 @@ LOCATE 14, 10
 PRINT "| |_/ /| | | |/\__/ / _| |_ | \__/\ | |\ \ | |    | |_\ \"
 LOCATE 15, 10
 PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
+LOCATE 18,40
+PRINT "Version 0.0.5B"
 SLEEP
 END SUB
 
@@ -319,7 +381,7 @@ SELECT CASE cosaADibujar$
     CASE "Murcielago"
         RESTORE Murcielago
     CASE "Mesa"
-        LOCATE 15, 40
+        RESTORE Mesa
 END SELECT
 FOR y = 1 TO 20
     FOR x = 1 TO 20

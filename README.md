@@ -1,3 +1,8 @@
+0.0.5B
+
+-Movimiento de enemigos
+-Inicialización con enemigos nulos
+
 0.0.5A
 
 -HEAVY refactor
