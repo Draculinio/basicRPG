@@ -1,3 +1,7 @@
+﻿0.0.5C
+
+-Solucionados bugs de no generación de fuerzas.
+
 0.0.5B
 
 -Movimiento de enemigos

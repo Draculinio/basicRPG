@@ -1,6 +1,8 @@
 REM ------------------------------BASIC RPG--------------------------
+REM ---Written by Pablo Soifer---
+REM ---youtube.com/draculinio---
 
-REM ----ENTORNO----
+REM ----------------------------ESTRUCTURAS---------------------------------------------
 TYPE personaje
     nombre AS STRING * 20
     bloqueante AS STRING * 1
@@ -20,8 +22,8 @@ END TYPE
 TYPE elemento
     nombre AS STRING * 20
     bloqueante AS STRING * 1
-    posx as INTEGER
-    posy as INTEGER
+    posx AS INTEGER
+    posy AS INTEGER
 END TYPE
 
 TYPE enemigo
@@ -34,6 +36,10 @@ TYPE enemigo
     posx AS INTEGER
     posy AS INTEGER
 END TYPE
+
+REM ----------------------------FIN ESTRUCTURAS---------------------------------------------
+
+REM ----------------------MAIN------------------------------
 
 DIM SHARED enemigos(10) AS enemigo
 DIM SHARED heroe AS personaje
@@ -51,6 +57,7 @@ crearEnemigo "Murcielago", 1, 30, 5
 crearElemento "Mesa", 1, 10, 10
 REM ---FIN ESCENARIO---
 presentacion
+resumenHeroe
 REM ----CREACION DEL ESCENARIO----
 FOR x = 1 TO 31
     FOR y = 1 TO 23
@@ -58,7 +65,7 @@ FOR x = 1 TO 31
     NEXT
 NEXT
 escenario(heroe.posx, heroe.posy) = 1000
-escenario(enemigos(1).posx,enemigos(1).posy)=1
+escenario(enemigos(1).posx, enemigos(1).posy) = 1
 escenario(10, 10) = 101
 REM ----FIN DE CREACION DE ESCENARIO----
 
@@ -72,6 +79,10 @@ DO
 LOOP UNTIL flagSalida = 1
 REM ----FIN LOOP PRINCIPAL
 
+REM -------------------------FIN DEL MAIN-----------------------------------
+
+
+REM -----------CREACION DE PERSONAJES-----------------------------
 SUB crearPersonaje ()
 DIM caracteristicas%(6) 'array de puntajes para asignar
 DIM sumadorCaracteristica(4) 'array para meter cada caracteristica
@@ -82,7 +93,6 @@ seleccionarClase
 FOR x = 1 TO 6
     caracteristica% = 0
     FOR y = 1 TO 4
-        sumadorCaracteristica(y) = 0
         sumadorCaracteristica(y) = dado(6)
     NEXT
     'Ordeno el array
@@ -91,62 +101,67 @@ FOR x = 1 TO 6
             IF sumadorCaracteristica(b) > sumadorCaracteristica(a) THEN SWAP sumadorCaracteristica(a), sumadorCaracteristica(b)
         NEXT
     NEXT
-    REM PRINT sumadorCaracteristica(1)
-    REM SLEEP
     'sumo los 3 mayores y los meto en caracterisiticas
     FOR a = 1 TO 3
         caracteristica% = caracteristica% + sumadorCaracteristica(a)
     NEXT
     caracteristicas%(x) = caracteristica%
+
 NEXT
 'ordeno el array de caracteristicas
 FOR a = 1 TO 6
     FOR b = 1 TO 6
         IF caracteristicas%(b) < caracteristicas%(a) THEN SWAP caracteristicas%(a), caracteristicas%(b)
     NEXT
+
 NEXT
+
 'Asigno caracter�sticas
-SELECT CASE heroe.clase
+SELECT CASE LTRIM$(RTRIM$(heroe.clase))
     CASE "Barbaro"
-        personaje.fuerza = caracteristicas%(1)
-        personaje.destreza = caracteristicas%(2)
-        personaje.constitucion = caracteristicas%(3)
-        personaje.sabiduria = caracteristicas%(4)
-        personaje.carisma = caracteristicas%(5)
-        personaje.inteligencia = caracteristicas%(6)
-        personaje.puntosGolpe = personaje.constitucion + 12
+        heroe.fuerza% = caracteristicas%(1)
+        heroe.destreza = caracteristicas%(2)
+        heroe.constitucion = caracteristicas%(3)
+        heroe.sabiduria = caracteristicas%(4)
+        heroe.carisma = caracteristicas%(5)
+        heroe.inteligencia = caracteristicas%(6)
+        heroe.puntosGolpe = heroe.constitucion + 12
     CASE "Mago"
-        personaje.inteligencia = caracteristicas%(1)
-        personaje.sabiduria = caracteristicas%(2)
-        personaje.destreza = caracteristicas%(3)
-        personaje.constitucion = caracteristicas%(4)
-        personaje.carisma = caracteristicas%(5)
-        personaje.fuerza = caracteristicas%(6)
-        personaje.puntosGolpe = personaje.constitucion + 4
+        heroe.inteligencia = caracteristicas%(1)
+        heroe.sabiduria = caracteristicas%(2)
+        heroe.destreza = caracteristicas%(3)
+        heroe.constitucion = caracteristicas%(4)
+        heroe.carisma = caracteristicas%(5)
+        heroe.fuerza% = caracteristicas%(6)
+        heroe.puntosGolpe = heroe.constitucion + 4
     CASE "Guerrero"
-        personaje.fuerza = caracteristicas%(1)
-        personaje.destreza = caracteristicas%(2)
-        personaje.constitucion = caracteristicas%(3)
-        personaje.inteligencia = caracteristicas%(4)
-        personaje.sabiduria = caracteristicas%(5)
-        personaje.carisma = caracteristicas%(6)
-        personaje.puntosGolpe = personaje.constitucion + 10
+        PRINT caracteristicas%(1)
+        heroe.fuerza% = caracteristicas%(1)
+        heroe.destreza = caracteristicas%(2)
+        heroe.constitucion = caracteristicas%(3)
+        heroe.inteligencia = caracteristicas%(4)
+        heroe.sabiduria = caracteristicas%(5)
+        heroe.carisma = caracteristicas%(6)
+        heroe.puntosGolpe = heroe.constitucion + 10
+        PRINT heroe.fuerza%
+    CASE ELSE
+        PRINT "Something went wrong..."
 END SELECT
 
 'Por �ltimo los modificadores de raza
-SELECT CASE heroe.raza
+SELECT CASE LTRIM$(RTRIM$(heroe.raza))
     CASE "Elfo"
-        personaje.destreza = personaje.destreza + 2
-        personaje.constitucion = personaje.constitucion - 2
+        heroe.destreza = heroe.destreza + 2
+        heroe.constitucion = heroe.constitucion - 2
     CASE "Enano"
-        personaje.constitucion = personaje.constitucion + 2
-        personaje.carisma = personaje.carisma - 2
+        heroe.constitucion = heroe.constitucion + 2
+        heroe.carisma = heroe.carisma - 2
     CASE "Gnomo"
-        personaje.constitucion = personaje.constitucion + 2
-        personaje.fuerza = personaje.fuerza - 2
+        heroe.constitucion = heroe.constitucion + 2
+        heroe.fuerza% = heroe.fuerza% - 2
 END SELECT
-
 END SUB
+
 SUB crearEnemigo (tipo$, posicion, posx, posy)
 SELECT CASE tipo$
     CASE "Nulo"
@@ -170,13 +185,13 @@ SELECT CASE tipo$
 END SELECT
 END SUB
 
-SUB inicializarEnemigos()
-    FOR a = 1 TO 10
-        crearEnemigo "Nulo",a,0,0
-    NEXT
+SUB inicializarEnemigos ()
+FOR a = 1 TO 10
+    crearEnemigo "Nulo", a, 0, 0
+NEXT
 END SUB
 
-SUB crearElemento (tipo$,posicion,posx,posy)
+SUB crearElemento (tipo$, posicion, posx, posy)
 SELECT CASE tipo$
     CASE "Mesa"
         elementos(posicion).nombre = tipo$
@@ -191,9 +206,9 @@ retorno = 0
 REM up
 IF tecla$ = CHR$(0) + CHR$(72) THEN
     IF heroe.posy > 1 THEN
-        IF escenario(heroe.posx, heroe.posy - 1)= 0 THEN
-            escenario(heroe.posx,heroe.posy)=0
-            escenario(heroe.posx,heroe.posy-1)=1000    
+        IF escenario(heroe.posx, heroe.posy - 1) = 0 THEN
+            escenario(heroe.posx, heroe.posy) = 0
+            escenario(heroe.posx, heroe.posy - 1) = 1000
             heroe.posy = heroe.posy - 1
             moverEnemigo
             dibujarEscenarioGrafico
@@ -205,8 +220,8 @@ REM down
 IF tecla$ = CHR$(0) + CHR$(80) THEN
     IF heroe.posy < 23 THEN
         IF escenario(heroe.posx, heroe.posy + 1) = 0 THEN
-            escenario(heroe.posx,heroe.posy)=0
-            escenario(heroe.posx,heroe.posy+1)=1000
+            escenario(heroe.posx, heroe.posy) = 0
+            escenario(heroe.posx, heroe.posy + 1) = 1000
             heroe.posy = heroe.posy + 1
             moverEnemigo
             dibujarEscenarioGrafico
@@ -217,9 +232,9 @@ END IF
 REM left
 IF tecla$ = CHR$(0) + CHR$(75) THEN
     IF heroe.posx > 1 THEN
-        IF escenario(heroe.posx - 1, heroe.posy)=0 THEN
-            escenario(heroe.posx,heroe.posy)=0
-            escenario(heroe.posx-1,heroe.posy)=1000
+        IF escenario(heroe.posx - 1, heroe.posy) = 0 THEN
+            escenario(heroe.posx, heroe.posy) = 0
+            escenario(heroe.posx - 1, heroe.posy) = 1000
             heroe.posx = heroe.posx - 1
             moverEnemigo
             dibujarEscenarioGrafico
@@ -230,9 +245,9 @@ END IF
 REM right
 IF tecla$ = CHR$(0) + CHR$(77) THEN
     IF heroe.posx < 31 THEN
-        IF escenario(heroe.posx + 1, heroe.posy)=0 THEN
-            escenario(heroe.posx,heroe.posy)=0
-            escenario(heroe.posx+1,heroe.posy)=1000
+        IF escenario(heroe.posx + 1, heroe.posy) = 0 THEN
+            escenario(heroe.posx, heroe.posy) = 0
+            escenario(heroe.posx + 1, heroe.posy) = 1000
             heroe.posx = heroe.posx + 1
             moverEnemigo
             dibujarEscenarioGrafico
@@ -246,46 +261,46 @@ END IF
 recibirTecla = retorno
 END FUNCTION
 
-SUB moverEnemigo()
-    FOR a = 1 TO 10
-        IF RTRIM$(enemigos(a).nombre)<>"Nulo" THEN
-            movimiento = dado(5)
-            SELECT CASE movimiento
-                CASE 1 'ARRIBA
-                    IF enemigos(a).posy > 1 THEN
-                        IF escenario(enemigos(a).posx, enemigos(a).posy - 1)= 0 THEN
-                            escenario(enemigos(a).posx,enemigos(a).posy)=0
-                            escenario(enemigos(a).posx,enemigos(a).posy-1)=a    
-                            enemigos(a).posy = enemigos(a).posy - 1
-                        END IF
-                    END IF      
-                CASE 2 'ABAJO
-                    IF enemigos(a).posy < 23 THEN
-                        IF escenario(enemigos(a).posx, enemigos(a).posy + 1) = 0 THEN
-                            escenario(enemigos(a).posx,enemigos(a).posy)=0
-                            escenario(enemigos(a).posx,enemigos(a).posy+1)=a
-                            enemigos(a).posy = enemigos(a).posy + 1
-                        END IF
+SUB moverEnemigo ()
+FOR a = 1 TO 10
+    IF RTRIM$(enemigos(a).nombre) <> "Nulo" THEN
+        movimiento = dado(5)
+        SELECT CASE movimiento
+            CASE 1 'ARRIBA
+                IF enemigos(a).posy > 1 THEN
+                    IF escenario(enemigos(a).posx, enemigos(a).posy - 1) = 0 THEN
+                        escenario(enemigos(a).posx, enemigos(a).posy) = 0
+                        escenario(enemigos(a).posx, enemigos(a).posy - 1) = a
+                        enemigos(a).posy = enemigos(a).posy - 1
                     END IF
-                CASE 3 'DERECHA
-                    IF enemigos(a).posx < 31 THEN
-                        IF escenario(enemigos(a).posx + 1, enemigos(a).posy)=0 THEN
-                            escenario(enemigos(a).posx,enemigos(a).posy)=0
-                            escenario(enemigos(a).posx+1,enemigos(a).posy)=a
-                            enemigos(a).posx = enemigos(a).posx + 1
-                        END IF
+                END IF
+            CASE 2 'ABAJO
+                IF enemigos(a).posy < 23 THEN
+                    IF escenario(enemigos(a).posx, enemigos(a).posy + 1) = 0 THEN
+                        escenario(enemigos(a).posx, enemigos(a).posy) = 0
+                        escenario(enemigos(a).posx, enemigos(a).posy + 1) = a
+                        enemigos(a).posy = enemigos(a).posy + 1
                     END IF
-                CASE 4 'IZQUIERDA
-                    IF enemigos(a).posx > 1 THEN
-                        IF escenario(enemigos(a).posx - 1, enemigos(a).posy)=0 THEN
-                            escenario(enemigos(a).posx,enemigos(a).posy)=0
-                            escenario(enemigos(a).posx-1,enemigos(a).posy)=a
-                            enemigos(a).posx = enemigos(a).posx - 1
-                        END IF
+                END IF
+            CASE 3 'DERECHA
+                IF enemigos(a).posx < 31 THEN
+                    IF escenario(enemigos(a).posx + 1, enemigos(a).posy) = 0 THEN
+                        escenario(enemigos(a).posx, enemigos(a).posy) = 0
+                        escenario(enemigos(a).posx + 1, enemigos(a).posy) = a
+                        enemigos(a).posx = enemigos(a).posx + 1
                     END IF
-            END SELECT
-        END IF
-    NEXT
+                END IF
+            CASE 4 'IZQUIERDA
+                IF enemigos(a).posx > 1 THEN
+                    IF escenario(enemigos(a).posx - 1, enemigos(a).posy) = 0 THEN
+                        escenario(enemigos(a).posx, enemigos(a).posy) = 0
+                        escenario(enemigos(a).posx - 1, enemigos(a).posy) = a
+                        enemigos(a).posx = enemigos(a).posx - 1
+                    END IF
+                END IF
+        END SELECT
+    END IF
+NEXT
 END SUB
 
 SUB seleccionarRaza ()
@@ -339,8 +354,8 @@ LOCATE 14, 10
 PRINT "| |_/ /| | | |/\__/ / _| |_ | \__/\ | |\ \ | |    | |_\ \"
 LOCATE 15, 10
 PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
-LOCATE 18,40
-PRINT "Version 0.0.5B"
+LOCATE 18, 40
+PRINT "Version 0.0.5C"
 SLEEP
 END SUB
 
@@ -354,19 +369,30 @@ FOR y = 1 TO 23
             CASE 1000
                 dibujarCosas x, y, RTRIM$(heroe.clase)
             CASE 1 TO 10
-                dibujarCosas x,y, RTRIM$(enemigos(escenario(x,y)).nombre)
+                dibujarCosas x, y, RTRIM$(enemigos(escenario(x, y)).nombre)
             CASE 101 TO 110
-                dibujarCosas x, y, RTRIM$(elementos(escenario(x,y)-100).nombre)
+                dibujarCosas x, y, RTRIM$(elementos(escenario(x, y) - 100).nombre)
         END SELECT
     NEXT
 NEXT
 LOCATE 1, 1
 PRINT nombre$ + "(" + STR$(heroe.posx) + "," + STR$(heroe.posy) + ")"
-LOCATE 1, 20
-PRINT heroe.clase + " " + heroe.raza
+LOCATE 1, 10
+PRINT LTRIM$(RTRIM$(heroe.clase)) + " " + LTRIM$(RTRIM$(heroe.raza))
 LOCATE 1, 40
-PRINT "F: " + STR$(personaje.fuerza) + " D: " + STR$(personaje.destreza) + " C: " + STR$(personaje.constitucion) + " S: " + STR$(personaje.sabiduria) + " I: " + STR$(personaje.inteligencia) + " CM: " + STR$(personaje.carisma)
+
+PRINT "F: " + STR$(heroe.fuerza%) + " D: " + STR$(heroe.destreza) + " C: " + STR$(heroe.constitucion) + " S: " + STR$(heroe.sabiduria) + " I: " + STR$(heroe.inteligencia) + " CM: " + STR$(heroe.carisma)
 LINE (0, 15)-(640, 15)
+END SUB
+
+SUB resumenHeroe ()
+CLS
+PRINT "Nombre: " + heroe.nombre
+PRINT "Raza: " + heroe.raza
+PRINT "Clase: " + heroe.clase
+
+PRINT "Fuerza: " + STR$(heroe.fuerza%)
+SLEEP
 END SUB
 
 SUB dibujarCosas (posx, posy, cosaADibujar$)
