@@ -54,6 +54,7 @@ crearPersonaje
 REM ---ESCENARIO---
 inicializarEnemigos
 crearEnemigo "Murcielago", 1, 30, 5
+crearEnemigo "Perro", 2, 30, 10
 crearElemento "Mesa", 1, 10, 10
 REM ---FIN ESCENARIO---
 presentacion
@@ -66,6 +67,7 @@ FOR x = 1 TO 31
 NEXT
 escenario(heroe.posx, heroe.posy) = 1000
 escenario(enemigos(1).posx, enemigos(1).posy) = 1
+escenario(enemigos(2).posx, enemigos(2).posy) = 2
 escenario(10, 10) = 101
 REM ----FIN DE CREACION DE ESCENARIO----
 
@@ -75,7 +77,7 @@ flagSalida = 0
 DO
     k$ = INKEY$
     flagSalida = recibirTecla(k$)
-    
+
 LOOP UNTIL flagSalida = 1
 REM ----FIN LOOP PRINCIPAL
 
@@ -182,6 +184,16 @@ SELECT CASE tipo$
         enemigos(posicion).velocidad2 = 8
         enemigos(posicion).posx = posx
         enemigos(posicion).posy = posy
+    CASE "Perro"
+        enemigos(posicion).nombre = tipo$
+        enemigos(posicion).tamano = "Medio"
+        enemigos(posicion).dado = 16
+        enemigos(posicion).modificadorDado = 4
+        enemigos(posicion).velocidad = 1
+        enemigos(posicion).velocidad2 = 8
+        enemigos(posicion).posx = posx
+        enemigos(posicion).posy = posy
+
 END SELECT
 END SUB
 
@@ -257,6 +269,11 @@ END IF
 
 IF tecla$ = CHR$(27) THEN
     retorno = 1
+END IF
+
+IF tecla$ = "s" THEN
+    resumenHeroe
+    dibujarEscenarioGrafico
 END IF
 recibirTecla = retorno
 END FUNCTION
@@ -355,7 +372,7 @@ PRINT "| |_/ /| | | |/\__/ / _| |_ | \__/\ | |\ \ | |    | |_\ \"
 LOCATE 15, 10
 PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
 LOCATE 18, 40
-PRINT "Version 0.0.5C"
+PRINT "Version 0.0.5D"
 SLEEP
 END SUB
 
@@ -387,11 +404,32 @@ END SUB
 
 SUB resumenHeroe ()
 CLS
+LINE (5, 10)-(630, 11), 5
+LINE (5, 470)-(630, 470), 5
+LINE (5, 10)-(5, 470), 5
+LINE (630, 11)-(630, 470), 5
+heroe$ = LTRIM$(RTRIM$(heroe.clase))
+dibujarCosas 12, 5, heroe$
+LOCATE 10, 25
 PRINT "Nombre: " + heroe.nombre
+LOCATE 11, 25
 PRINT "Raza: " + heroe.raza
+LOCATE 12, 25
 PRINT "Clase: " + heroe.clase
-
+LOCATE 13, 25
 PRINT "Fuerza: " + STR$(heroe.fuerza%)
+LOCATE 14, 25
+PRINT "Destreza: " + STR$(heroe.destreza)
+LOCATE 15, 25
+PRINT "Constitucion: " + STR$(heroe.constitucion)
+LOCATE 16, 25
+PRINT "Sabiduria: " + STR$(heroe.sabiduria)
+LOCATE 17, 25
+PRINT "Inteligencia: " + STR$(heroe.inteligencia)
+LOCATE 18, 25
+PRINT "Carisma: " + STR$(heroe.carisma)
+LOCATE 19, 25
+PRINT "Puntos de Golpe: " + STR$(heroe.puntosGolpe)
 SLEEP
 END SUB
 
@@ -406,6 +444,8 @@ SELECT CASE cosaADibujar$
         RESTORE Barbaro
     CASE "Murcielago"
         RESTORE Murcielago
+    CASE "Perro"
+        RESTORE Perro
     CASE "Mesa"
         RESTORE Mesa
 END SELECT
@@ -503,6 +543,28 @@ DATA 00,00,00,00,00,00,01,01,01,01,01,01,01,01,01,00,00,00,00,00
 DATA 00,00,00,00,00,00,00,01,01,00,00,00,01,01,00,00,00,00,00,00
 DATA 00,00,00,00,00,00,00,01,01,00,00,00,01,01,00,00,00,00,00,00
 DATA 00,00,00,00,00,00,01,01,01,01,00,01,01,01,01,00,00,00,00,00
+Perro:
+DATA 00,00,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,00,06,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,06,06,06,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,06,06,06,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,06,01,01,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 06,06,01,01,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 06,06,06,06,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,06,06,06,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,06,06,06,06,06,06,06,06,07,07,06,06,06,06,00,00,00,00,00
+DATA 00,00,00,00,06,06,06,06,06,07,07,06,06,06,06,06,00,00,00,00
+DATA 00,00,00,00,06,06,06,06,06,07,07,06,06,06,06,06,06,06,06,06
+DATA 00,00,00,00,06,06,06,06,06,07,07,06,06,06,06,06,00,00,00,00
+DATA 00,00,00,00,00,06,06,00,06,06,00,06,06,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,06,06,00,06,06,00,06,06,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,06,06,00,06,06,00,06,06,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,06,06,00,06,06,00,06,06,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,06,06,00,06,06,00,06,06,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,06,06,00,06,06,00,06,06,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,06,06,00,06,06,00,06,06,00,06,06,00,00,00,00
+DATA 00,00,00,00,00,06,06,00,06,06,00,06,06,00,06,06,00,00,00,00
+
 Mesa:
 DATA 00,00,00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06
 DATA 00,00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06,06
