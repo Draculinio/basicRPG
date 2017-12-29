@@ -3,6 +3,14 @@ REM ---Written by Pablo Soifer---
 REM ---youtube.com/draculinio---
 
 REM ----------------------------ESTRUCTURAS---------------------------------------------
+
+TYPE wearable
+    nombre AS STRING * 20
+    ataque AS INTEGER
+    defensa AS INTEGER
+END TYPE
+
+
 TYPE personaje
     nombre AS STRING * 20
     bloqueante AS STRING * 1
@@ -17,6 +25,12 @@ TYPE personaje
     clase AS STRING * 20
     posx AS INTEGER
     posy AS INTEGER
+    cabeza AS wearable
+    pecho AS wearable
+    manoizquierda AS wearable
+    manoderecha AS wearable
+    pantalon AS wearable
+    botas as wearable
 END TYPE
 
 TYPE elemento
@@ -36,6 +50,8 @@ TYPE enemigo
     posx AS INTEGER
     posy AS INTEGER
 END TYPE
+
+
 
 REM ----------------------------FIN ESTRUCTURAS---------------------------------------------
 
