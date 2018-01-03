@@ -30,7 +30,7 @@ TYPE personaje
     manoizquierda AS wearable
     manoderecha AS wearable
     pantalon AS wearable
-    botas as wearable
+    botas AS wearable
 END TYPE
 
 TYPE elemento
@@ -57,10 +57,14 @@ REM ----------------------------FIN ESTRUCTURAS---------------------------------
 
 REM ----------------------MAIN------------------------------
 
+REM Variables globales de tipos que me sirven para usar en el programa, en serio QBasic no deja retornar types
+DIM SHARED wear AS wearable
+
 DIM SHARED enemigos(10) AS enemigo
 DIM SHARED heroe AS personaje
 DIM SHARED elementos(10) AS elemento
 DIM SHARED escenario(1 TO 31, 1 TO 23) AS INTEGER
+
 REM Variables del jugador
 heroe.posx = 1
 heroe.posy = 1
@@ -72,6 +76,7 @@ inicializarEnemigos
 crearEnemigo "Murcielago", 1, 30, 5
 crearEnemigo "Perro", 2, 30, 10
 crearElemento "Mesa", 1, 10, 10
+
 REM ---FIN ESCENARIO---
 presentacion
 resumenHeroe
@@ -212,6 +217,18 @@ SELECT CASE tipo$
 
 END SELECT
 END SUB
+
+FUNCTION crearWearable (tipo$)
+wear.nombre = tipo$
+SELECT CASE tipo$
+    CASE "Palo"
+        wear.ataque = 6
+        wear.defensa = 0
+    CASE "Cimitarra"
+        wear.ataque = 6
+        wear.defensa = 0
+END SELECT
+END FUNCTION
 
 SUB inicializarEnemigos ()
 FOR a = 1 TO 10
