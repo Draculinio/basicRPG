@@ -139,7 +139,7 @@ FOR a = 1 TO 6
 
 NEXT
 
-'Asigno caracter�sticas
+'Asigno caracteristicas
 SELECT CASE LTRIM$(RTRIM$(heroe.clase))
     CASE "Barbaro"
         heroe.fuerza% = caracteristicas%(1)
@@ -171,7 +171,7 @@ SELECT CASE LTRIM$(RTRIM$(heroe.clase))
         PRINT "Something went wrong..."
 END SELECT
 
-'Por �ltimo los modificadores de raza
+'Por ultimo los modificadores de raza
 SELECT CASE LTRIM$(RTRIM$(heroe.raza))
     CASE "Elfo"
         heroe.destreza = heroe.destreza + 2
@@ -246,10 +246,10 @@ SELECT CASE tipo$
 END SELECT
 END SUB
 
+'Esta es la funcion que tiene toda la magia, recibe una tecla decide una accion por ello y retorna algo, si es 1 va a ser el fin del programa
 FUNCTION recibirTecla (tecla$)
 retorno = 0
-REM up
-IF tecla$ = CHR$(0) + CHR$(72) THEN
+IF tecla$ = CHR$(0) + CHR$(72) THEN 'arriba
     IF heroe.posy > 1 THEN
         IF escenario(heroe.posx, heroe.posy - 1) = 0 THEN
             escenario(heroe.posx, heroe.posy) = 0
@@ -260,9 +260,7 @@ IF tecla$ = CHR$(0) + CHR$(72) THEN
         END IF
     END IF
 END IF
-
-REM down
-IF tecla$ = CHR$(0) + CHR$(80) THEN
+IF tecla$ = CHR$(0) + CHR$(80) THEN 'abajo
     IF heroe.posy < 23 THEN
         IF escenario(heroe.posx, heroe.posy + 1) = 0 THEN
             escenario(heroe.posx, heroe.posy) = 0
@@ -274,8 +272,7 @@ IF tecla$ = CHR$(0) + CHR$(80) THEN
     END IF
 END IF
 
-REM left
-IF tecla$ = CHR$(0) + CHR$(75) THEN
+IF tecla$ = CHR$(0) + CHR$(75) THEN 'izquierda
     IF heroe.posx > 1 THEN
         IF escenario(heroe.posx - 1, heroe.posy) = 0 THEN
             escenario(heroe.posx, heroe.posy) = 0
@@ -287,8 +284,7 @@ IF tecla$ = CHR$(0) + CHR$(75) THEN
     END IF
 END IF
 
-REM right
-IF tecla$ = CHR$(0) + CHR$(77) THEN
+IF tecla$ = CHR$(0) + CHR$(77) THEN 'derecha
     IF heroe.posx < 31 THEN
         IF escenario(heroe.posx + 1, heroe.posy) = 0 THEN
             escenario(heroe.posx, heroe.posy) = 0
@@ -300,12 +296,17 @@ IF tecla$ = CHR$(0) + CHR$(77) THEN
     END IF
 END IF
 
-IF tecla$ = CHR$(27) THEN
+IF tecla$ = CHR$(27) THEN 'ESC = Salir del juego
     retorno = 1
 END IF
 
-IF tecla$ = "s" THEN
+IF tecla$ = "s" THEN 'Resumen del heroe
     resumenHeroe
+    dibujarEscenarioGrafico
+END IF
+
+IF tecla$ = CHR$(0) + CHR$(59) THEN 'F1 = Comandos del juego
+    mostrarComandos
     dibujarEscenarioGrafico
 END IF
 recibirTecla = retorno
@@ -433,6 +434,33 @@ LOCATE 1, 40
 
 PRINT "F: " + STR$(heroe.fuerza%) + " D: " + STR$(heroe.destreza) + " C: " + STR$(heroe.constitucion) + " S: " + STR$(heroe.sabiduria) + " I: " + STR$(heroe.inteligencia) + " CM: " + STR$(heroe.carisma)
 LINE (0, 15)-(640, 15)
+END SUB
+
+'Muestra los comandos existentes
+SUB mostrarComandos ()
+CLS
+LINE (5, 10)-(630, 11), 5
+LINE (5, 470)-(630, 470), 5
+LINE (5, 10)-(5, 470), 5
+LINE (630, 11)-(630, 470), 5
+LOCATE 5, 30
+PRINT "COMANDOS"
+LOCATE 7, 20
+PRINT "F. Arriba: Arriba"
+LOCATE 8, 20
+PRINT "F. Abajo: Abajo"
+LOCATE 9, 20
+PRINT "F. Izquierda: Izquierda"
+LOCATE 10, 20
+PRINT "F. Derecha: Derecha"
+LOCATE 11, 20
+PRINT "s: Datos del jugador"
+LOCATE 12, 20
+PRINT "F1: Este Menu"
+LOCATE 14, 20
+PRINT "Esc: Salir del juego"
+
+SLEEP
 END SUB
 
 SUB resumenHeroe ()

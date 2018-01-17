@@ -1,4 +1,10 @@
-﻿0.0.5C
+﻿0.0.5D
+
+-Agregada pantalla para ver los datos del personaje
+-Agregado gráfico del perro
+-Agregando wearables
+
+0.0.5C
 
 -Solucionados bugs de no generación de fuerzas.
 
