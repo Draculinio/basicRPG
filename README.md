@@ -2,7 +2,9 @@
 
 -Agregada pantalla para ver los datos del personaje
 -Agregado gráfico del perro
--Agregando wearables
+-Agregando wearables, creado el type wearables
+-Agregando wearables al heroe por parte del cuerpo.
+
 
 0.0.5C
 

@@ -78,8 +78,10 @@ crearEnemigo "Perro", 2, 30, 10
 crearElemento "Mesa", 1, 10, 10
 
 REM ---FIN ESCENARIO---
+
 presentacion
 resumenHeroe
+
 REM ----CREACION DEL ESCENARIO----
 FOR x = 1 TO 31
     FOR y = 1 TO 23
@@ -109,6 +111,11 @@ REM -----------CREACION DE PERSONAJES-----------------------------
 SUB crearPersonaje ()
 DIM caracteristicas%(6) 'array de puntajes para asignar
 DIM sumadorCaracteristica(4) 'array para meter cada caracteristica
+COLOR 5
+LOCATE 1, 30
+PRINT "BASIC RPG"
+LOCATE 2, 1
+COLOR 15
 INPUT "Ingrese el nombre del jugador: ", nombre$
 heroe.nombre = nombre$
 seleccionarRaza
@@ -185,6 +192,11 @@ SELECT CASE LTRIM$(RTRIM$(heroe.raza))
 END SELECT
 END SUB
 
+REM Crea un enemigo, se le pasa por parametro:
+REM tipo$ = nombre/codigo
+REM posicion = lugar en el array de enemigos
+REM posx = posicion en x
+REM posy = posicion en y
 SUB crearEnemigo (tipo$, posicion, posx, posy)
 SELECT CASE tipo$
     CASE "Nulo"
@@ -218,17 +230,40 @@ SELECT CASE tipo$
 END SELECT
 END SUB
 
-FUNCTION crearWearable (tipo$)
-wear.nombre = tipo$
-SELECT CASE tipo$
-    CASE "Palo"
-        wear.ataque = 6
-        wear.defensa = 0
-    CASE "Cimitarra"
-        wear.ataque = 6
-        wear.defensa = 0
+'Le da armas al heroe
+'El lugar es numerico 1-Cabeza 2-Pecho 3-mano derecha 3-Mano izquierda 4-Pantalon 5-Botas
+SUB darArma (codigo, posicion)
+DIM arma AS wearable
+SELECT CASE codigo
+    CASE 1
+        arma.nombre = "Espada Larga"
+        arma.ataque = 8
+        arma.defensa = 0
+    CASE 2
+        arma.nombre = "Gran Hacha"
+        arma.ataque = 12
+        arma.defensa = 0
+    CASE 3
+        arma.nombre = "Baston"
+        arma.ataque = 6
+        arma.defensa = 0
 END SELECT
-END FUNCTION
+SELECT CASE posicion
+    CASE 1
+        heroe.cabeza = arma
+    CASE 2
+        heroe.pecho = arma
+    CASE 3
+        heroe.manoderecha = arma
+    CASE 4
+        heroe.manoizquierda = arma
+    CASE 5
+        heroe.pantalon = arma
+    CASE 6
+        heroe.botas = arma
+END SELECT
+END SUB
+
 
 SUB inicializarEnemigos ()
 FOR a = 1 TO 10
@@ -312,6 +347,7 @@ END IF
 recibirTecla = retorno
 END FUNCTION
 
+REM Mueve los enemigos aleatoriamente
 SUB moverEnemigo ()
 FOR a = 1 TO 10
     IF RTRIM$(enemigos(a).nombre) <> "Nulo" THEN
