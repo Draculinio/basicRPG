@@ -1,8 +1,9 @@
-REM ------------------------------BASIC RPG--------------------------
-REM ---Written by Pablo Soifer---
-REM ---youtube.com/draculinio---
+'------------------------------BASIC RPG--------------------------
 
-REM ----------------------------ESTRUCTURAS---------------------------------------------
+'---Written by Pablo Soifer---
+'---youtube.com/draculinio---
+
+'----------------------------ESTRUCTURAS---------------------------------------------
 
 TYPE wearable
     nombre AS STRING * 20
@@ -57,7 +58,7 @@ REM ----------------------------FIN ESTRUCTURAS---------------------------------
 
 REM ----------------------MAIN------------------------------
 
-REM Variables globales de tipos que me sirven para usar en el programa, en serio QBasic no deja retornar types
+'Variables globales de tipos que me sirven para usar en el programa, en serio QBasic no deja retornar types
 DIM SHARED wear AS wearable
 
 DIM SHARED enemigos(10) AS enemigo
@@ -65,9 +66,13 @@ DIM SHARED heroe AS personaje
 DIM SHARED elementos(10) AS elemento
 DIM SHARED escenario(1 TO 31, 1 TO 23) AS INTEGER
 
-REM Variables del jugador
+'Variables del jugador
 heroe.posx = 1
 heroe.posy = 1
+FOR i = 1 TO 6 'Por las dudas vamos a inicializar todo el equipo del personaje con vacios
+    darArma 0, i
+NEXT
+
 REM ----FIN DEL ENTORNO----
 SCREEN 12
 crearPersonaje
@@ -156,6 +161,7 @@ SELECT CASE LTRIM$(RTRIM$(heroe.clase))
         heroe.carisma = caracteristicas%(5)
         heroe.inteligencia = caracteristicas%(6)
         heroe.puntosGolpe = heroe.constitucion + 12
+        darArma 4, 4
     CASE "Mago"
         heroe.inteligencia = caracteristicas%(1)
         heroe.sabiduria = caracteristicas%(2)
@@ -173,7 +179,8 @@ SELECT CASE LTRIM$(RTRIM$(heroe.clase))
         heroe.sabiduria = caracteristicas%(5)
         heroe.carisma = caracteristicas%(6)
         heroe.puntosGolpe = heroe.constitucion + 10
-        PRINT heroe.fuerza%
+        darArma 1, 3
+        darArma 4, 4
     CASE ELSE
         PRINT "Something went wrong..."
 END SELECT
@@ -235,6 +242,10 @@ END SUB
 SUB darArma (codigo, posicion)
 DIM arma AS wearable
 SELECT CASE codigo
+    CASE 0 'VACIO
+        arma.nombre = ""
+        arma.ataque = 0
+        arma.defensa = 0
     CASE 1
         arma.nombre = "Espada Larga"
         arma.ataque = 8
@@ -247,6 +258,10 @@ SELECT CASE codigo
         arma.nombre = "Baston"
         arma.ataque = 6
         arma.defensa = 0
+    CASE 4
+        arma.nombre = "Rodela"
+        arma.ataque = 0
+        arma.defensa = 1
 END SELECT
 SELECT CASE posicion
     CASE 1
@@ -442,7 +457,7 @@ PRINT "| |_/ /| | | |/\__/ / _| |_ | \__/\ | |\ \ | |    | |_\ \"
 LOCATE 15, 10
 PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
 LOCATE 18, 40
-PRINT "Version 0.0.5D"
+PRINT "Version 0.0.5E"
 SLEEP
 END SUB
 
@@ -507,26 +522,38 @@ LINE (5, 10)-(5, 470), 5
 LINE (630, 11)-(630, 470), 5
 heroe$ = LTRIM$(RTRIM$(heroe.clase))
 dibujarCosas 12, 5, heroe$
-LOCATE 10, 25
-PRINT "Nombre: " + heroe.nombre
-LOCATE 11, 25
-PRINT "Raza: " + heroe.raza
-LOCATE 12, 25
-PRINT "Clase: " + heroe.clase
-LOCATE 13, 25
-PRINT "Fuerza: " + STR$(heroe.fuerza%)
+IF LTRIM$(RTRIM$(heroe.manoderecha.nombre)) <> "" THEN
+    dibujarCosas 5, 5, LTRIM$(RTRIM$(heroe.manoderecha.nombre))
+END IF
+IF LTRIM$(RTRIM$(heroe.manoizquierda.nombre)) <> "" THEN
+    dibujarCosas 24, 5, LTRIM$(RTRIM$(heroe.manoizquierda.nombre))
+END IF
+COLOR 5
+LOCATE 2, 35
+PRINT "CARACTERISTICAS"
+COLOR 15
 LOCATE 14, 25
-PRINT "Destreza: " + STR$(heroe.destreza)
+PRINT "Nombre: " + heroe.nombre
 LOCATE 15, 25
-PRINT "Constitucion: " + STR$(heroe.constitucion)
+PRINT "Raza: " + heroe.raza
 LOCATE 16, 25
-PRINT "Sabiduria: " + STR$(heroe.sabiduria)
+PRINT "Clase: " + heroe.clase
 LOCATE 17, 25
-PRINT "Inteligencia: " + STR$(heroe.inteligencia)
+PRINT "Fuerza: " + STR$(heroe.fuerza%)
 LOCATE 18, 25
-PRINT "Carisma: " + STR$(heroe.carisma)
+PRINT "Destreza: " + STR$(heroe.destreza)
 LOCATE 19, 25
+PRINT "Constitucion: " + STR$(heroe.constitucion)
+LOCATE 20, 25
+PRINT "Sabiduria: " + STR$(heroe.sabiduria)
+LOCATE 21, 25
+PRINT "Inteligencia: " + STR$(heroe.inteligencia)
+LOCATE 22, 25
+PRINT "Carisma: " + STR$(heroe.carisma)
+LOCATE 23, 25
 PRINT "Puntos de Golpe: " + STR$(heroe.puntosGolpe)
+LOCATE 24, 25
+PRINT "Brazo Derecho: " + heroe.manoderecha.nombre
 SLEEP
 END SUB
 
@@ -545,6 +572,10 @@ SELECT CASE cosaADibujar$
         RESTORE Perro
     CASE "Mesa"
         RESTORE Mesa
+    CASE "Espada Larga"
+        RESTORE EspadaLarga
+    CASE "Rodela"
+        RESTORE Rodela
 END SELECT
 FOR y = 1 TO 20
     FOR x = 1 TO 20
@@ -683,6 +714,50 @@ DATA 06,00,00,00,06,00,00,00,00,00,00,00,00,00,00,06,00,00,00,06
 DATA 06,00,00,00,06,00,00,00,00,00,00,00,00,00,00,06,00,00,00,06
 DATA 06,00,00,00,06,00,00,00,00,00,00,00,00,00,00,06,00,00,00,06
 DATA 06,00,00,00,06,00,00,00,00,00,00,00,00,00,00,06,00,00,00,06
+
+EspadaLarga:
+DATA 00,00,00,00,00,00,00,00,00,07,07,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,07,07,07,07,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,07,07,07,08,07,07,00,00,00,00,00,00,00
+DATA 00,00,00,06,06,00,00,07,07,07,08,07,07,00,00,06,06,00,00,00
+DATA 00,00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,06,00,00,00
+DATA 00,00,00,06,06,06,06,06,06,06,06,06,06,06,06,06,00,00,00,00
+DATA 00,00,00,00,06,06,06,06,06,06,06,06,06,06,06,00,00,00,00,00
+DATA 00,00,00,00,00,00,06,06,06,06,06,06,06,06,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,06,06,06,06,06,06,06,06,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,04,04,04,04,04,04,04,04,00,00,00,00,00,00
+DATA 00,00,00,00,00,06,06,06,06,06,06,06,06,06,06,00,00,00,00,00
+DATA 00,00,00,00,00,06,06,06,06,06,06,06,06,06,06,00,00,00,00,00
+
+Rodela:
+DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,06,06,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,06,07,07,06,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,07,07,07,07,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,06,07,07,07,07,07,07,06,00,00,00,00,00,00
+DATA 00,00,00,00,00,06,07,07,07,07,07,07,07,07,06,00,00,00,00,00
+DATA 00,00,00,00,06,07,07,07,07,07,07,07,07,07,07,06,00,00,00,00
+DATA 00,00,00,06,07,07,07,07,07,07,07,07,07,07,07,07,06,00,00,00
+DATA 00,00,00,06,07,07,07,07,07,07,07,07,07,07,07,07,06,00,00,00
+DATA 00,00,00,00,06,07,07,07,07,07,07,07,07,07,07,06,00,00,00,00
+DATA 00,00,00,00,00,06,07,07,07,07,07,07,07,07,06,00,00,00,00,00
+DATA 00,00,00,00,00,00,06,07,07,07,07,07,07,06,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,06,07,07,07,07,06,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,06,07,07,06,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,06,06,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
 
 END SUB
 
