@@ -1,4 +1,12 @@
-﻿0.0.5D
+﻿0.0.0E
+
+-Agregados wearables al personaje
+-Wearables mostrados en la pantalla de los status
+-Agregado gráfico de Rodela
+-Agregado gráfico de Espada Larga
+-Agregado sub de colisión
+
+0.0.5D
 
 -Agregada pantalla para ver los datos del personaje
 -Agregado gráfico del perro
