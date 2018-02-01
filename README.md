@@ -1,4 +1,8 @@
-﻿0.0.0E
+﻿0.0.6
+
+-Codeando la colisión. Cuando choca con un enemigo aparece un cartel que dice con que choca.
+
+0.0.5E
 
 -Agregados wearables al personaje
 -Wearables mostrados en la pantalla de los status

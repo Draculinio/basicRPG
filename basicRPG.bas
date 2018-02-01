@@ -307,7 +307,10 @@ IF tecla$ = CHR$(0) + CHR$(72) THEN 'arriba
             heroe.posy = heroe.posy - 1
             moverEnemigo
             dibujarEscenarioGrafico
+        ELSE
+            colision heroe.posx, heroe.posy - 1
         END IF
+
     END IF
 END IF
 IF tecla$ = CHR$(0) + CHR$(80) THEN 'abajo
@@ -318,7 +321,10 @@ IF tecla$ = CHR$(0) + CHR$(80) THEN 'abajo
             heroe.posy = heroe.posy + 1
             moverEnemigo
             dibujarEscenarioGrafico
+        ELSE
+            colision heroe.posx, heroe.posy + 1
         END IF
+
     END IF
 END IF
 
@@ -330,7 +336,10 @@ IF tecla$ = CHR$(0) + CHR$(75) THEN 'izquierda
             heroe.posx = heroe.posx - 1
             moverEnemigo
             dibujarEscenarioGrafico
+        ELSE
+            colision heroe.posx - 1, heroe.posy
         END IF
+
     END IF
 END IF
 
@@ -342,7 +351,10 @@ IF tecla$ = CHR$(0) + CHR$(77) THEN 'derecha
             heroe.posx = heroe.posx + 1
             moverEnemigo
             dibujarEscenarioGrafico
+        ELSE
+            colision heroe.posx + 1, heroe.posy
         END IF
+
     END IF
 END IF
 
@@ -362,7 +374,7 @@ END IF
 recibirTecla = retorno
 END FUNCTION
 
-REM Mueve los enemigos aleatoriamente
+'Mueve los enemigos aleatoriamente
 SUB moverEnemigo ()
 FOR a = 1 TO 10
     IF RTRIM$(enemigos(a).nombre) <> "Nulo" THEN
@@ -442,6 +454,26 @@ END SUB
 
 'Que pasa al colisionar
 SUB colision (posx, posy)
+collisionFlag = 0
+FOR a = 1 TO 10
+    IF RTRIM$(enemigos(a).nombre) <> "Nulo" THEN
+        IF enemigos(a).posx = posx AND enemigos(a).posy = posy THEN 'se choca con un enemigo, a la batalla!
+            collisionFlag = a
+        END IF
+    END IF
+NEXT
+
+IF collisionFlag < 11 AND collisionFlag > 0 THEN 'ATAQUE!!!!!!
+    LINE (200, 200)-(440, 280), 5, BF , 255
+    LOCATE 14, 30
+    COLOR 15, 5
+    PRINT ("Atacando a " + LTRIM$(RTRIM$(enemigos(collisionFlag).nombre)))
+    SLEEP
+    COLOR 15, 0
+    dibujarEscenarioGrafico
+
+END IF
+
 END SUB
 
 '---------------------------------------------FUNCIONES DE DIBUJO-----------------------------------
@@ -461,7 +493,7 @@ PRINT "| |_/ /| | | |/\__/ / _| |_ | \__/\ | |\ \ | |    | |_\ \"
 LOCATE 15, 10
 PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
 LOCATE 18, 40
-PRINT "Version 0.0.5E"
+PRINT "Version 0.0.6"
 SLEEP
 END SUB
 
