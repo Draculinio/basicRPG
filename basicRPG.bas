@@ -801,6 +801,13 @@ resultado% = INT(RND * caras) + 1
 dado = resultado%
 END FUNCTION
 
+'Sistema de combate
+FUNCTION combate (enemigo AS INTEGER)
+'Primero ver si inflige da�o
+ataque% = dado(20)
+'Each ability will have a modifier. The modifier can be calculated using this formula: (ability/2) -5 [round result down]
+'
+END FUNCTION
 '----LEGACY, quizá algún día vuelvas-----
 'SUB seleccionarPantalla ()
 'INPUT "Seleccione modo de juego pantalla (1-640x480, 16 colores / 2-320x200 256 colores): ", modo
