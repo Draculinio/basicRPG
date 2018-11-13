@@ -1,4 +1,8 @@
-﻿0.0.6
+﻿0.0.6A
+
+-Ahora el agregar arma usa como segundo parámetro un string y ya no más el código numérico.
+
+0.0.6
 
 -Codeando la colisión. Cuando choca con un enemigo aparece un cartel que dice con que choca.
 
