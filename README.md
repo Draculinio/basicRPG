@@ -1,4 +1,9 @@
-﻿0.0.6A
+﻿0.0.7
+
+-Cambio mayor: Ahora los enemigos también usan la estructura de personaje.
+-El armamento ahora 
+
+0.0.6A
 
 -Ahora el agregar arma usa como segundo parámetro un string y ya no más el código numérico.
 
