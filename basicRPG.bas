@@ -41,17 +41,6 @@ TYPE elemento
     posy AS INTEGER
 END TYPE
 
-TYPE enemigo
-    nombre AS STRING * 20
-    tamano AS STRING * 20
-    dado AS INTEGER
-    modificadorDado AS INTEGER
-    velocidad AS INTEGER
-    velocidad2 AS INTEGER
-    posx AS INTEGER
-    posy AS INTEGER
-END TYPE
-
 
 '----------------------------FIN ESTRUCTURAS---------------------------------------------
 
@@ -61,7 +50,7 @@ REM ----------------------MAIN------------------------------
 'Variables globales de tipos que me sirven para usar en el programa, en serio QBasic no deja retornar types
 DIM SHARED wear AS wearable
 
-DIM SHARED enemigos(10) AS enemigo
+DIM SHARED enemigos(10) AS personaje
 DIM SHARED heroe AS personaje
 DIM SHARED elementos(10) AS elemento
 DIM SHARED escenario(1 TO 31, 1 TO 23) AS INTEGER
@@ -160,7 +149,14 @@ SUB crearPersonaje ()
             heroe.carisma = caracteristicas%(5)
             heroe.inteligencia = caracteristicas%(6)
             heroe.puntosGolpe = heroe.constitucion + 12
-            darArma 4, "mano derecha"
+            darArma 4
+            heroe.manoderecha = wear
+            darArma 0
+            heroe.cabeza = wear
+            heroe.pecho = wear
+            heroe.manoizquierda = wear
+            heroe.pantalon = wear
+            heroe.botas = wear
         CASE "Mago"
             heroe.inteligencia = caracteristicas%(1)
             heroe.sabiduria = caracteristicas%(2)
@@ -169,6 +165,14 @@ SUB crearPersonaje ()
             heroe.carisma = caracteristicas%(5)
             heroe.fuerza% = caracteristicas%(6)
             heroe.puntosGolpe = heroe.constitucion + 4
+            darArma 0
+            heroe.manoderecha = wear
+            heroe.cabeza = wear
+            heroe.pecho = wear
+            heroe.manoizquierda = wear
+            heroe.pantalon = wear
+            heroe.botas = wear
+
         CASE "Guerrero"
             heroe.fuerza% = caracteristicas%(1)
             heroe.destreza = caracteristicas%(2)
@@ -177,8 +181,16 @@ SUB crearPersonaje ()
             heroe.sabiduria = caracteristicas%(5)
             heroe.carisma = caracteristicas%(6)
             heroe.puntosGolpe = heroe.constitucion + 10
-            darArma 1, "mano derecha"
-            darArma 4, "mano izquierda"
+            darArma 1
+            heroe.manoderecha = wear
+            darArma 4
+            heroe.manoizquierda = wear
+            darArma 0
+            heroe.cabeza = wear
+            heroe.pecho = wear
+            heroe.pantalon = wear
+            heroe.botas = wear
+
         CASE ELSE
             PRINT "Something went wrong..."
     END SELECT
@@ -206,74 +218,87 @@ SUB crearEnemigo (tipo$, posicion, posx, posy)
     SELECT CASE tipo$
         CASE "Nulo"
             enemigos(posicion).nombre = tipo$
-            enemigos(posicion).tamano = "Nulo"
-            enemigos(posicion).dado = 0
-            enemigos(posicion).modificadorDado = 0
-            enemigos(posicion).velocidad = 0
-            enemigos(posicion).velocidad2 = 0
+            enemigos(posicion).bloqueante = tipo$
+            enemigos(posicion).fuerza = 0
+            enemigos(posicion).constitucion = 0
+            enemigos(posicion).sabiduria = 0
+            enemigos(posicion).inteligencia = 0
+            enemigos(posicion).puntosGolpe = 0
+            enemigos(posicion).raza = ""
+            enemigos(posicion).clase = ""
             enemigos(posicion).posx = posx
             enemigos(posicion).posy = posy
+            darArma 0
+            enemigos(posicion).cabeza = wear
+            enemigos(posicion).pecho = wear
+            enemigos(posicion).manoizquierda = wear
+            enemigos(posicion).manoderecha = wear
+            enemigos(posicion).pantalon = wear
+            enemigos(posicion).botas = wear
         CASE "Murcielago"
             enemigos(posicion).nombre = tipo$
-            enemigos(posicion).tamano = "Diminuto"
-            enemigos(posicion).dado = 8
-            enemigos(posicion).modificadorDado = 0.25
-            enemigos(posicion).velocidad = 1
-            enemigos(posicion).velocidad2 = 8
+            enemigos(posicion).bloqueante = tipo$
+            enemigos(posicion).fuerza = 0
+            enemigos(posicion).constitucion = 0
+            enemigos(posicion).sabiduria = 0
+            enemigos(posicion).inteligencia = 0
+            enemigos(posicion).puntosGolpe = 0
+            enemigos(posicion).raza = ""
+            enemigos(posicion).clase = ""
             enemigos(posicion).posx = posx
             enemigos(posicion).posy = posy
+            darArma 0
+            enemigos(posicion).cabeza = wear
+            enemigos(posicion).pecho = wear
+            enemigos(posicion).manoizquierda = wear
+            enemigos(posicion).manoderecha = wear
+            enemigos(posicion).pantalon = wear
+            enemigos(posicion).botas = wear
         CASE "Perro"
             enemigos(posicion).nombre = tipo$
-            enemigos(posicion).tamano = "Medio"
-            enemigos(posicion).dado = 16
-            enemigos(posicion).modificadorDado = 4
-            enemigos(posicion).velocidad = 1
-            enemigos(posicion).velocidad2 = 8
+            enemigos(posicion).bloqueante = tipo$
+            enemigos(posicion).fuerza = 0
+            enemigos(posicion).constitucion = 0
+            enemigos(posicion).sabiduria = 0
+            enemigos(posicion).inteligencia = 0
+            enemigos(posicion).puntosGolpe = 0
+            enemigos(posicion).raza = ""
+            enemigos(posicion).clase = ""
             enemigos(posicion).posx = posx
             enemigos(posicion).posy = posy
-
+            darArma 0
+            enemigos(posicion).cabeza = wear
+            enemigos(posicion).pecho = wear
+            enemigos(posicion).manoizquierda = wear
+            enemigos(posicion).manoderecha = wear
+            enemigos(posicion).pantalon = wear
+            enemigos(posicion).botas = wear
     END SELECT
 END SUB
 
-'Le da armas al heroe
-'El lugar es numerico 1-Cabeza 2-Pecho 3-mano derecha 3-Mano izquierda 4-Pantalon 5-Botas
-SUB darArma (codigo, posicion$)
-    DIM arma AS wearable
+'Le da armas a un personaje. Usa el wearable definido como global (un espanto pero bue) wear
+SUB darArma (codigo)
     SELECT CASE codigo
         CASE 0 'VACIO
-            arma.nombre = ""
-            arma.ataque = 0
-            arma.defensa = 0
+            wear.nombre = ""
+            wear.ataque = 0
+            wear.defensa = 0
         CASE 1
-            arma.nombre = "Espada Larga"
-            arma.ataque = 8
-            arma.defensa = 0
+            wear.nombre = "Espada Larga"
+            wear.ataque = 8
+            wear.defensa = 0
         CASE 2
-            arma.nombre = "Gran Hacha"
-            arma.ataque = 12
-            arma.defensa = 0
+            wear.nombre = "Gran Hacha"
+            wear.ataque = 12
+            wear.defensa = 0
         CASE 3
-            arma.nombre = "Baston"
-            arma.ataque = 6
-            arma.defensa = 0
+            wear.nombre = "Baston"
+            wear.ataque = 6
+            wear.defensa = 0
         CASE 4
-            arma.nombre = "Rodela"
-            arma.ataque = 0
-            arma.defensa = 1
-    END SELECT
-    SELECT CASE posicion$
-        CASE "cabeza"
-            heroe.cabeza = arma
-        CASE "pecho"
-            heroe.pecho = arma
-        CASE "mano derecha"
-            heroe.manoderecha = arma
-        CASE "mano izquierda"
-            heroe.manoizquierda = arma
-        CASE "pantalon"
-            heroe.pantalon = arma
-        CASE "botas"
-            heroe.botas = arma
+            wear.nombre = "Rodela"
+            wear.ataque = 0
+            wear.defensa = 1
     END SELECT
 END SUB
 
@@ -491,7 +516,7 @@ SUB presentacion
     LOCATE 15, 10
     PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
     LOCATE 18, 40
-    PRINT "Version 0.0.6A"
+    PRINT "Version 0.0.7"
     SLEEP
 END SUB
 
@@ -560,7 +585,7 @@ SUB resumenHeroe ()
         dibujarCosas 5, 5, LTRIM$(RTRIM$(heroe.manoderecha.nombre))
     END IF
     IF LTRIM$(RTRIM$(heroe.manoizquierda.nombre)) <> "" THEN
-        dibujarCosas 24, 5, LTRIM$(RTRIM$(heroe.manoizquierda.nombre))
+        dibujarCosas 20, 5, LTRIM$(RTRIM$(heroe.manoizquierda.nombre))
     END IF
     COLOR 5
     LOCATE 2, 35
@@ -586,8 +611,11 @@ SUB resumenHeroe ()
     PRINT "Carisma: " + STR$(heroe.carisma)
     LOCATE 23, 25
     PRINT "Puntos de Golpe: " + STR$(heroe.puntosGolpe)
-    LOCATE 24, 25
+    LOCATE 24, 10
     PRINT "Brazo Derecho: " + heroe.manoderecha.nombre
+    LOCATE 24, 40
+    PRINT "Brazo Izquierdo: " + heroe.manoizquierda.nombre
+
     SLEEP
 END SUB
 
