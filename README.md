@@ -1,4 +1,8 @@
-﻿0.0.7
+﻿0.0.8
+
+-Creando el mapeador en un archivo aparte. Lee una matriz de 20x20 en un archivo .lvl
+
+0.0.7
 
 -Cambio mayor: Ahora los enemigos también usan la estructura de personaje.
 -El armamento ahora 
