@@ -18,12 +18,29 @@ FOR i = 1 TO size
     NEXT
 NEXT
 CLOSE 1
-PRINT "Final: "
+
+
+
+'conversor
 FOR i = 1 TO size
     FOR j = 1 TO size
-        PRINT mapa(i, j)
+        SELECT CASE mapa(i, j)
+            CASE "0"
+                PRINT ("Espacio vacio")
+            CASE "1"
+                PRINT ("Heroe")
+            CASE "2"
+                PRINT ("Murcielago")
+            CASE "3"
+                PRINT ("Perro")
+            CASE "4"
+                PRINT ("Mesa")
+            CASE "5"
+                PRINT ("Moneda")
+            CASE ELSE
+                PRINT ("----ERROR----")
+
+        END SELECT
     NEXT
 NEXT
-
-
 

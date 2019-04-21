@@ -1,4 +1,8 @@
-﻿0.0.8
+﻿0.0.8.A
+
+-El mapeador tiene un for que traduce números en cosas que hay.
+
+0.0.8
 
 -Creando el mapeador en un archivo aparte. Lee una matriz de 20x20 en un archivo .lvl
 
