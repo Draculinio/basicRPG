@@ -69,6 +69,7 @@ inicializarEnemigos
 crearEnemigo "Murcielago", 1, 30, 5
 crearEnemigo "Perro", 2, 30, 10
 crearElemento "Mesa", 1, 10, 10
+crearElemento "Moneda", 1, 20, 5
 
 REM ---FIN ESCENARIO---
 
@@ -310,12 +311,16 @@ SUB inicializarEnemigos ()
 END SUB
 
 SUB crearElemento (tipo$, posicion, posx, posy)
+    elementos(posicion).nombre = tipo$
+    elementos(posicion).posx = posx
+    elementos(posicion).posy = posy
+
     SELECT CASE tipo$
         CASE "Mesa"
-            elementos(posicion).nombre = tipo$
             elementos(posicion).bloqueante = "S"
-            elementos(posicion).posx = posx
-            elementos(posicion).posy = posy
+        CASE "Moneda"
+            elementos(posicion).bloqueante = "N"
+
     END SELECT
 END SUB
 
@@ -516,7 +521,11 @@ SUB presentacion
     LOCATE 15, 10
     PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
     LOCATE 18, 40
-    PRINT "Version 0.0.7"
+    PRINT "Version 0.0.8B"
+    LOCATE 19, 1
+    PRINT "Por Pablo Soifer / @pablosoifer1"
+    LOCATE 20, 1
+    PRINT "youtube/draculinio"
     SLEEP
 END SUB
 
@@ -638,6 +647,8 @@ SUB dibujarCosas (posx, posy, cosaADibujar$)
             RESTORE EspadaLarga
         CASE "Rodela"
             RESTORE Rodela
+        CASE "Moneda"
+            RESTORE Moneda
     END SELECT
     FOR y = 1 TO 20
         FOR x = 1 TO 20
@@ -817,6 +828,30 @@ SUB dibujarCosas (posx, posy, cosaADibujar$)
     DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
     DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
     DATA 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+    Moneda:
+    DATA 00,00,00,00,00,00,00,00,14,14,14,14,00,00,00,00,00,00,00,00
+    DATA 00,00,00,00,00,00,00,14,14,14,14,14,14,00,00,00,00,00,00,00
+    DATA 00,00,00,00,00,00,14,14,14,14,14,14,14,14,00,00,00,00,00,00
+    DATA 00,00,00,00,00,14,14,14,14,14,14,14,14,14,14,00,00,00,00,00
+    DATA 00,00,00,00,14,14,14,14,14,14,14,14,14,14,14,14,00,00,00,00
+    DATA 00,00,00,14,14,14,14,14,14,14,14,14,14,14,14,14,14,00,00,00
+    DATA 00,00,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,00,00
+    DATA 00,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,00
+    DATA 14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14
+    DATA 14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14
+    DATA 14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14
+    DATA 14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14
+    DATA 00,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,00
+    DATA 00,00,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,00,00
+    DATA 00,00,00,14,14,14,14,14,14,14,14,14,14,14,14,14,14,00,00,00
+    DATA 00,00,00,00,14,14,14,14,14,14,14,14,14,14,14,14,00,00,00,00
+    DATA 00,00,00,00,00,14,14,14,14,14,14,14,14,14,14,00,00,00,00,00
+    DATA 00,00,00,00,00,00,14,14,14,14,14,14,14,14,00,00,00,00,00,00
+    DATA 00,00,00,00,00,00,00,14,14,14,14,14,14,00,00,00,00,00,00,00
+    DATA 00,00,00,00,00,00,00,00,14,14,14,14,00,00,00,00,00,00,00,00
+
+
+
 
 END SUB
 
