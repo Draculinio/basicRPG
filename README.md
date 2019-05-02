@@ -1,4 +1,10 @@
-﻿0.0.8.A
+﻿0.1.0
+
+-El mapeador está en el programa principal
+-Sub de crear elementos que inicializa todos a null.
+
+
+0.0.8.A
 
 -El mapeador tiene un for que traduce números en cosas que hay.
 

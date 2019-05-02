@@ -47,6 +47,7 @@ END TYPE
 
 REM ----------------------MAIN------------------------------
 
+
 'Variables globales de tipos que me sirven para usar en el programa, en serio QBasic no deja retornar types
 DIM SHARED wear AS wearable
 
@@ -55,23 +56,26 @@ DIM SHARED heroe AS personaje
 DIM SHARED elementos(10) AS elemento
 DIM SHARED escenario(1 TO 31, 1 TO 23) AS INTEGER
 
+mapeador ("1") 'Llamo al mapeador que levante map1.lvl que es el inicial
+
+
 'Variables del jugador
 heroe.posx = 1
 heroe.posy = 1
 
-
-'----FIN DEL ENTORNO----
-
-SCREEN 12
-crearPersonaje
 REM ---ESCENARIO---
 inicializarEnemigos
 crearEnemigo "Murcielago", 1, 30, 5
 crearEnemigo "Perro", 2, 30, 10
 crearElemento "Mesa", 1, 10, 10
-crearElemento "Moneda", 1, 20, 5
+crearElemento "Moneda", 2, 20, 15
 
 REM ---FIN ESCENARIO---
+
+'----FIN DEL ENTORNO----
+
+SCREEN 12
+crearPersonaje
 
 presentacion
 resumenHeroe
@@ -86,6 +90,7 @@ escenario(heroe.posx, heroe.posy) = 1000
 escenario(enemigos(1).posx, enemigos(1).posy) = 1
 escenario(enemigos(2).posx, enemigos(2).posy) = 2
 escenario(10, 10) = 101
+escenario(20, 15) = 102
 dibujarEscenarioGrafico
 '----FIN DE CREACION DE ESCENARIO----
 
@@ -310,6 +315,11 @@ SUB inicializarEnemigos ()
     NEXT
 END SUB
 
+SUB inicializarElementos ()
+    FOR a = 1 TO 10
+        crearElemento "Nulo", a, 0, 0
+    NEXT
+END SUB
 SUB crearElemento (tipo$, posicion, posx, posy)
     elementos(posicion).nombre = tipo$
     elementos(posicion).posx = posx
@@ -521,7 +531,7 @@ SUB presentacion
     LOCATE 15, 10
     PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
     LOCATE 18, 40
-    PRINT "Version 0.0.8B"
+    PRINT "Version 0.1.0"
     LOCATE 19, 1
     PRINT "Por Pablo Soifer / @pablosoifer1"
     LOCATE 20, 1
@@ -869,7 +879,45 @@ FUNCTION combate (enemigo AS INTEGER)
     'Each ability will have a modifier. The modifier can be calculated using this formula: (ability/2) -5 [round result down]
     '
 END FUNCTION
-'----LEGACY, quizá algún día vuelvas-----
+
+
+SUB mapeador (mapa AS STRING)
+    CONST size = 31
+    CONST height = 23
+    map$ = "map" + mapa + ".lvl"
+    OPEN map$ FOR INPUT AS 1
+
+    'INPUT #1, elemento$
+    'PRINT elemento$
+    'INPUT #1, elemento$
+    'PRINT elemento$
+    FOR i = 1 TO height
+        INPUT #1, elemento$
+        'PRINT mid$(elemento$,1,1)
+        FOR j = 1 TO size
+            escenario(j, i) = VAL(MID$(elemento$, j, 1))
+        NEXT
+    NEXT
+    CLOSE 1
+END SUB
+
+
+SUB poblarMapa ()
+    inicializarEnemigos
+    inicializarElementos
+    contadorEnemigos = 0
+    contadorElementos = 0
+    FOR i = 1 TO 31
+        FOR j = 1 TO 23
+
+        NEXT
+
+    NEXT
+
+END SUB
+
+
+'----LEGACY, quiza algun dia vuelvas-----
 'SUB seleccionarPantalla ()
 'INPUT "Seleccione modo de juego pantalla (1-640x480, 16 colores / 2-320x200 256 colores): ", modo
 'IF modo = 1 THEN
