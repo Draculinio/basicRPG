@@ -45,7 +45,7 @@ END TYPE
 '----------------------------FIN ESTRUCTURAS---------------------------------------------
 
 
-REM ----------------------MAIN------------------------------
+' ----------------------MAIN------------------------------
 
 
 'Variables globales de tipos que me sirven para usar en el programa, en serio QBasic no deja retornar types
@@ -54,21 +54,19 @@ DIM SHARED wear AS wearable
 DIM SHARED enemigos(10) AS personaje
 DIM SHARED heroe AS personaje
 DIM SHARED elementos(10) AS elemento
-DIM SHARED escenario(1 TO 31, 1 TO 23) AS INTEGER
-
-mapeador ("1") 'Llamo al mapeador que levante map1.lvl que es el inicial
+DIM SHARED escenario(1 TO 31, 1 TO 23) AS STRING
 
 
 'Variables del jugador
-heroe.posx = 1
-heroe.posy = 1
+'heroe.posx = 1
+'heroe.posy = 1
 
-REM ---ESCENARIO---
-inicializarEnemigos
-crearEnemigo "Murcielago", 1, 30, 5
-crearEnemigo "Perro", 2, 30, 10
-crearElemento "Mesa", 1, 10, 10
-crearElemento "Moneda", 2, 20, 15
+' ---ESCENARIO---
+'inicializarEnemigos
+'crearEnemigo "Murcielago", 1, 30, 5
+'crearEnemigo "Perro", 2, 30, 10
+'crearElemento "Mesa", 1, 10, 10
+'crearElemento "Moneda", 2, 20, 15
 
 REM ---FIN ESCENARIO---
 
@@ -81,16 +79,18 @@ presentacion
 resumenHeroe
 
 REM ----CREACION DEL ESCENARIO----
-FOR x = 1 TO 31
-    FOR y = 1 TO 23
-        escenario(x, y) = 0
-    NEXT
-NEXT
-escenario(heroe.posx, heroe.posy) = 1000
-escenario(enemigos(1).posx, enemigos(1).posy) = 1
-escenario(enemigos(2).posx, enemigos(2).posy) = 2
-escenario(10, 10) = 101
-escenario(20, 15) = 102
+'FOR x = 1 TO 31
+'FOR y = 1 TO 23
+'escenario(x, y) = 0
+'NEXT
+'NEXT
+mapeador ("1") 'Llamo al mapeador que levante map1.lvl que es el inicial
+poblarMapa
+'escenario(heroe.posx, heroe.posy) = 1000
+'escenario(enemigos(1).posx, enemigos(1).posy) = 1
+'escenario(enemigos(2).posx, enemigos(2).posy) = 2
+'escenario(10, 10) = 101
+'escenario(20, 15) = 102
 dibujarEscenarioGrafico
 '----FIN DE CREACION DE ESCENARIO----
 
@@ -339,9 +339,9 @@ FUNCTION recibirTecla (tecla$)
     retorno = 0
     IF tecla$ = CHR$(0) + CHR$(72) THEN 'arriba
         IF heroe.posy > 1 THEN
-            IF escenario(heroe.posx, heroe.posy - 1) = 0 THEN
-                escenario(heroe.posx, heroe.posy) = 0
-                escenario(heroe.posx, heroe.posy - 1) = 1000
+            IF escenario(heroe.posx, heroe.posy - 1) = "0" THEN
+                escenario(heroe.posx, heroe.posy) = "0"
+                escenario(heroe.posx, heroe.posy - 1) = "1"
                 heroe.posy = heroe.posy - 1
                 moverEnemigo
                 dibujarEscenarioGrafico
@@ -353,9 +353,9 @@ FUNCTION recibirTecla (tecla$)
     END IF
     IF tecla$ = CHR$(0) + CHR$(80) THEN 'abajo
         IF heroe.posy < 23 THEN
-            IF escenario(heroe.posx, heroe.posy + 1) = 0 THEN
-                escenario(heroe.posx, heroe.posy) = 0
-                escenario(heroe.posx, heroe.posy + 1) = 1000
+            IF escenario(heroe.posx, heroe.posy + 1) = "0" THEN
+                escenario(heroe.posx, heroe.posy) = "0"
+                escenario(heroe.posx, heroe.posy + 1) = "1"
                 heroe.posy = heroe.posy + 1
                 moverEnemigo
                 dibujarEscenarioGrafico
@@ -368,9 +368,9 @@ FUNCTION recibirTecla (tecla$)
 
     IF tecla$ = CHR$(0) + CHR$(75) THEN 'izquierda
         IF heroe.posx > 1 THEN
-            IF escenario(heroe.posx - 1, heroe.posy) = 0 THEN
-                escenario(heroe.posx, heroe.posy) = 0
-                escenario(heroe.posx - 1, heroe.posy) = 1000
+            IF escenario(heroe.posx - 1, heroe.posy) = "0" THEN
+                escenario(heroe.posx, heroe.posy) = "0"
+                escenario(heroe.posx - 1, heroe.posy) = "1"
                 heroe.posx = heroe.posx - 1
                 moverEnemigo
                 dibujarEscenarioGrafico
@@ -383,9 +383,9 @@ FUNCTION recibirTecla (tecla$)
 
     IF tecla$ = CHR$(0) + CHR$(77) THEN 'derecha
         IF heroe.posx < 31 THEN
-            IF escenario(heroe.posx + 1, heroe.posy) = 0 THEN
-                escenario(heroe.posx, heroe.posy) = 0
-                escenario(heroe.posx + 1, heroe.posy) = 1000
+            IF escenario(heroe.posx + 1, heroe.posy) = "0" THEN
+                escenario(heroe.posx, heroe.posy) = "0"
+                escenario(heroe.posx + 1, heroe.posy) = "1"
                 heroe.posx = heroe.posx + 1
                 moverEnemigo
                 dibujarEscenarioGrafico
@@ -417,36 +417,37 @@ SUB moverEnemigo ()
     FOR a = 1 TO 10
         IF RTRIM$(enemigos(a).nombre) <> "Nulo" THEN
             movimiento = dado(5)
+            elementoActual$ = escenario(enemigos(a).posx, enemigos(a).posy) 'Para saber lo que hay actualmente en el lugar para poder moverlo
             SELECT CASE movimiento
                 CASE 1 'ARRIBA
                     IF enemigos(a).posy > 1 THEN
-                        IF escenario(enemigos(a).posx, enemigos(a).posy - 1) = 0 THEN
-                            escenario(enemigos(a).posx, enemigos(a).posy) = 0
-                            escenario(enemigos(a).posx, enemigos(a).posy - 1) = a
+                        IF escenario(enemigos(a).posx, enemigos(a).posy - 1) = "0" THEN
+                            escenario(enemigos(a).posx, enemigos(a).posy) = "0"
+                            escenario(enemigos(a).posx, enemigos(a).posy - 1) = elementoActual$
                             enemigos(a).posy = enemigos(a).posy - 1
                         END IF
                     END IF
                 CASE 2 'ABAJO
                     IF enemigos(a).posy < 23 THEN
-                        IF escenario(enemigos(a).posx, enemigos(a).posy + 1) = 0 THEN
-                            escenario(enemigos(a).posx, enemigos(a).posy) = 0
-                            escenario(enemigos(a).posx, enemigos(a).posy + 1) = a
+                        IF escenario(enemigos(a).posx, enemigos(a).posy + 1) = "0" THEN
+                            escenario(enemigos(a).posx, enemigos(a).posy) = "0"
+                            escenario(enemigos(a).posx, enemigos(a).posy + 1) = elementoActual$
                             enemigos(a).posy = enemigos(a).posy + 1
                         END IF
                     END IF
                 CASE 3 'DERECHA
                     IF enemigos(a).posx < 31 THEN
-                        IF escenario(enemigos(a).posx + 1, enemigos(a).posy) = 0 THEN
-                            escenario(enemigos(a).posx, enemigos(a).posy) = 0
-                            escenario(enemigos(a).posx + 1, enemigos(a).posy) = a
+                        IF escenario(enemigos(a).posx + 1, enemigos(a).posy) = "0" THEN
+                            escenario(enemigos(a).posx, enemigos(a).posy) = "0"
+                            escenario(enemigos(a).posx + 1, enemigos(a).posy) = elementoActual$
                             enemigos(a).posx = enemigos(a).posx + 1
                         END IF
                     END IF
                 CASE 4 'IZQUIERDA
                     IF enemigos(a).posx > 1 THEN
-                        IF escenario(enemigos(a).posx - 1, enemigos(a).posy) = 0 THEN
-                            escenario(enemigos(a).posx, enemigos(a).posy) = 0
-                            escenario(enemigos(a).posx - 1, enemigos(a).posy) = a
+                        IF escenario(enemigos(a).posx - 1, enemigos(a).posy) = "0" THEN
+                            escenario(enemigos(a).posx, enemigos(a).posy) = "0"
+                            escenario(enemigos(a).posx - 1, enemigos(a).posy) = elementoActual$
                             enemigos(a).posx = enemigos(a).posx - 1
                         END IF
                     END IF
@@ -518,19 +519,35 @@ END SUB
 
 SUB presentacion
     CLS
+    typeColor = 2
     LOCATE 10, 10
+    COLOR typeColor
+    typeColor = typeColor + 1
     PRINT "______   ___   _____  _____  _____  ______ ______  _____"
+    COLOR 7
     LOCATE 11, 10
+    COLOR typeColor
+    typeColor = typeColor + 1
     PRINT "| ___ \ / _ \ /  ___||_   _|/  __ \ | ___ \| ___ \|  __ \"
     LOCATE 12, 10
+    COLOR typeColor
+    typeColor = typeColor + 1
     PRINT "| |_/ // /_\ \\ `--.   | |  | /  \/ | |_/ /| |_/ /| |  \/"
     LOCATE 13, 10
+    COLOR typeColor
+    typeColor = typeColor + 1
     PRINT "| ___ \|  _  | `--. \  | |  | |     |    / |  __/ | | __"
     LOCATE 14, 10
+    COLOR typeColor
+    typeColor = typeColor + 1
     PRINT "| |_/ /| | | |/\__/ / _| |_ | \__/\ | |\ \ | |    | |_\ \"
     LOCATE 15, 10
+    COLOR typeColor
+    typeColor = typeColor + 1
     PRINT "\____/ \_| |_/\____/  \___/  \____/ \_| \_|\_|     \____/"
     LOCATE 18, 40
+    COLOR typeColor
+    typeColor = typeColor + 2
     PRINT "Version 0.1.0"
     LOCATE 19, 1
     PRINT "Por Pablo Soifer / @pablosoifer1"
@@ -545,13 +562,19 @@ SUB dibujarEscenarioGrafico ()
     py = 0
     FOR y = 1 TO 23
         FOR x = 1 TO 31
-            SELECT CASE escenario(x, y)
-                CASE 1000
+            SELECT CASE escenario$(x, y)
+                CASE "1"
                     dibujarCosas x, y, RTRIM$(heroe.clase)
-                CASE 1 TO 10
-                    dibujarCosas x, y, RTRIM$(enemigos(escenario(x, y)).nombre)
-                CASE 101 TO 110
-                    dibujarCosas x, y, RTRIM$(elementos(escenario(x, y) - 100).nombre)
+                CASE "b"
+                    dibujarCosas x, y, RTRIM$("Murcielago")
+                CASE "d"
+                    dibujarCosas x, y, RTRIM$("Perro")
+                CASE "t"
+                    dibujarCosas x, y, RTRIM$("Mesa")
+                CASE "c"
+                    dibujarCosas x, y, RTRIM$("Moneda")
+                    'CASE 101 TO 110
+                    '    dibujarCosas x, y, RTRIM$(elementos(escenario(x, y) - 100).nombre)
             END SELECT
         NEXT
     NEXT
@@ -895,7 +918,7 @@ SUB mapeador (mapa AS STRING)
         INPUT #1, elemento$
         'PRINT mid$(elemento$,1,1)
         FOR j = 1 TO size
-            escenario(j, i) = VAL(MID$(elemento$, j, 1))
+            escenario(j, i) = MID$(elemento$, j, 1)
         NEXT
     NEXT
     CLOSE 1
@@ -905,16 +928,58 @@ END SUB
 SUB poblarMapa ()
     inicializarEnemigos
     inicializarElementos
-    contadorEnemigos = 0
-    contadorElementos = 0
+    contadorEnemigos = 1
+    contadorElementos = 1
     FOR i = 1 TO 31
         FOR j = 1 TO 23
-
+            SELECT CASE escenario(i, j) 'TODO: Este codigo es tremendamente repetitivo, debe ser mejorado.
+                CASE IS = "1" 'heroe
+                    heroe.posx = i
+                    heroe.posy = j
+                CASE IS = "b" 'ENEMIGO: MURCIELAGO
+                    IF contadorEnemigos <= 10 THEN
+                        crearEnemigo "Murcielago", contadorEnemigos, i, j
+                        contadorEnemigos = contadorEnemigos + 1
+                    END IF
+                CASE IS = "d"
+                    IF contadorEnemigos <= 10 THEN
+                        crearEnemigo "Perro", contadorEnemigos, i, j
+                        contadorEnemigos = contadorEnemigos + 1
+                    END IF
+                CASE IS = "t"
+                    IF contadorElementos <= 10 THEN
+                        crearElemento "Mesa", contadorElementos, i, j
+                        contadorElementos = contadorElementos + 1
+                    END IF
+                CASE IS = "c"
+                    IF contadorElementos <= 10 THEN
+                        crearElemento "Moneda", contadorElementos, i, j
+                        contadorElementos = contadorElementos + 1
+                    END IF
+            END SELECT
         NEXT
 
     NEXT
 
 END SUB
+
+FUNCTION retornarElemento$ (elemento AS INTEGER) 'Dado un codigo debe devolver que elemento es.
+    elem$ = ""
+    SELECT CASE elemento
+        CASE IS = 1
+            elem$ = "Heroe"
+        CASE IS = 2
+            elem$ = "Murcielago"
+        CASE IS = 3
+            elem$ = "Perro"
+        CASE IS = 4
+            elem$ = "Mesa"
+        CASE IS = 5
+            elem$ = "Moneda"
+
+    END SELECT
+    retornarElemento$ = elem$
+END FUNCTION
 
 
 '----LEGACY, quiza algun dia vuelvas-----
