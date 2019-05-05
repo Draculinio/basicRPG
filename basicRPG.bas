@@ -32,6 +32,7 @@ TYPE personaje
     manoderecha AS wearable
     pantalon AS wearable
     botas AS wearable
+    dinero AS INTEGER
 END TYPE
 
 TYPE elemento
@@ -57,16 +58,6 @@ DIM SHARED elementos(10) AS elemento
 DIM SHARED escenario(1 TO 31, 1 TO 23) AS STRING
 
 
-'Variables del jugador
-'heroe.posx = 1
-'heroe.posy = 1
-
-' ---ESCENARIO---
-'inicializarEnemigos
-'crearEnemigo "Murcielago", 1, 30, 5
-'crearEnemigo "Perro", 2, 30, 10
-'crearElemento "Mesa", 1, 10, 10
-'crearElemento "Moneda", 2, 20, 15
 
 REM ---FIN ESCENARIO---
 
@@ -79,18 +70,8 @@ presentacion
 resumenHeroe
 
 REM ----CREACION DEL ESCENARIO----
-'FOR x = 1 TO 31
-'FOR y = 1 TO 23
-'escenario(x, y) = 0
-'NEXT
-'NEXT
 mapeador ("1") 'Llamo al mapeador que levante map1.lvl que es el inicial
 poblarMapa
-'escenario(heroe.posx, heroe.posy) = 1000
-'escenario(enemigos(1).posx, enemigos(1).posy) = 1
-'escenario(enemigos(2).posx, enemigos(2).posy) = 2
-'escenario(10, 10) = 101
-'escenario(20, 15) = 102
 dibujarEscenarioGrafico
 '----FIN DE CREACION DE ESCENARIO----
 
@@ -146,6 +127,7 @@ SUB crearPersonaje ()
     NEXT
 
     'Asigno caracteristicas
+    heroe.dinero = 0
     SELECT CASE LTRIM$(RTRIM$(heroe.clase))
         CASE "Barbaro"
             heroe.fuerza% = caracteristicas%(1)
@@ -343,13 +325,20 @@ FUNCTION recibirTecla (tecla$)
                 escenario(heroe.posx, heroe.posy) = "0"
                 escenario(heroe.posx, heroe.posy - 1) = "1"
                 heroe.posy = heroe.posy - 1
-                moverEnemigo
-                dibujarEscenarioGrafico
             ELSE
+                IF colisionElemento$(heroe.posx, heroe.posy - 1) = "SI" THEN
+                    escenario(heroe.posx, heroe.posy) = "0"
+                    escenario(heroe.posx, heroe.posy - 1) = "1"
+                    heroe.posy = heroe.posy - 1
+
+                END IF
                 colision heroe.posx, heroe.posy - 1
             END IF
 
         END IF
+        moverEnemigo
+        dibujarEscenarioGrafico
+
     END IF
     IF tecla$ = CHR$(0) + CHR$(80) THEN 'abajo
         IF heroe.posy < 23 THEN
@@ -360,6 +349,11 @@ FUNCTION recibirTecla (tecla$)
                 moverEnemigo
                 dibujarEscenarioGrafico
             ELSE
+                IF colisionElemento$(heroe.posx, heroe.posy + 1) = "SI" THEN
+                    escenario(heroe.posx, heroe.posy) = "0"
+                    escenario(heroe.posx, heroe.posy + 1) = "1"
+                    heroe.posy = heroe.posy + 1
+                END IF
                 colision heroe.posx, heroe.posy + 1
             END IF
 
@@ -375,6 +369,12 @@ FUNCTION recibirTecla (tecla$)
                 moverEnemigo
                 dibujarEscenarioGrafico
             ELSE
+                IF colisionElemento$(heroe.posx - 1, heroe.posy) = "SI" THEN
+                    escenario(heroe.posx, heroe.posy) = "0"
+                    escenario(heroe.posx - 1, heroe.posy) = "1"
+                    heroe.posx = heroe.posx - 1
+                END IF
+
                 colision heroe.posx - 1, heroe.posy
             END IF
 
@@ -390,6 +390,12 @@ FUNCTION recibirTecla (tecla$)
                 moverEnemigo
                 dibujarEscenarioGrafico
             ELSE
+                IF colisionElemento$(heroe.posx + 1, heroe.posy) = "SI" THEN
+                    escenario(heroe.posx, heroe.posy) = "0"
+                    escenario(heroe.posx + 1, heroe.posy) = "1"
+                    heroe.posx = heroe.posx + 1
+                END IF
+
                 colision heroe.posx + 1, heroe.posy
             END IF
 
@@ -495,7 +501,7 @@ END SUB
 SUB colision (posx, posy)
     collisionFlag = 0
     FOR a = 1 TO 10
-        IF RTRIM$(enemigos(a).nombre) <> "Nulo" THEN
+        IF RTRIM$(enemigos(a).nombre) <> "Nulo" THEN 'Verifica choques con enemigos
             IF enemigos(a).posx = posx AND enemigos(a).posy = posy THEN 'se choca con un enemigo, a la batalla!
                 collisionFlag = a
             END IF
@@ -515,6 +521,23 @@ SUB colision (posx, posy)
 
 END SUB
 
+
+FUNCTION colisionElemento$ (posx AS INTEGER, posy AS INTEGER)
+    collisionFlag = 0
+    pasa$ = "NO" 'Pasa puede tirar tres valores: SI, que es que lo pasa,NO, que es bloqueante y ACUMULABLE que es para tomar objetos
+    FOR a = 1 TO 10
+
+        IF RTRIM$(elementos(a).nombre) <> "Nulo" THEN
+            IF elementos(a).posx = posx AND elementos(a).posy = posy THEN 'se choca con un objeto, debe decidir si es bloqueante, es pasable o es acumulable
+                IF elementos(a).bloqueante = "N" THEN
+                    pasa$ = "SI"
+                END IF
+            END IF
+        END IF
+    NEXT
+
+    colisionElemento$ = pasa$
+END FUNCTION
 '---------------------------------------------FUNCIONES DE DIBUJO-----------------------------------
 
 SUB presentacion
@@ -548,7 +571,7 @@ SUB presentacion
     LOCATE 18, 40
     COLOR typeColor
     typeColor = typeColor + 2
-    PRINT "Version 0.1.0"
+    PRINT "Version 0.1.1"
     LOCATE 19, 1
     PRINT "Por Pablo Soifer / @pablosoifer1"
     LOCATE 20, 1

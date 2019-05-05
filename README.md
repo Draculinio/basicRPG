@@ -1,4 +1,10 @@
-﻿0.1.0
+﻿0.1.1
+
+-Mapeador funcionando
+-Agregada la variable dinero para el personaje
+-Empezando a trabajar con elementos que pueden ser traspasados (ver como hacer que puedan "no desaparecer")
+
+0.1.0
 
 -El mapeador está en el programa principal
 -Sub de crear elementos que inicializa todos a null.
